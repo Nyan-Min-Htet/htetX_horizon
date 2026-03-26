@@ -4,7 +4,7 @@ import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { name: "New Arrivals", href: "/NewArrivals" },
+  { name: "NewArrivals", href: "/NewArrivals" },
   { name: "Collections", href: "#" },
   { name: "Men", href: "#" },
   { name: "Women", href: "#" },

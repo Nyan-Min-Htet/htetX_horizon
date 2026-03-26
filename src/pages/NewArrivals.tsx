@@ -1,6 +1,6 @@
 import React from "react";
-import { Header } from "./Header";
-import { Footer } from "./Footer";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
 
 import minimalJacket from "@/assets/minimal-jacket.webp";
 import streetHoodie from "@/assets/street-hoodie.jpg";
