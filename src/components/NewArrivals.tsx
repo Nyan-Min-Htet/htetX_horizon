@@ -2,10 +2,10 @@ import React from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 
-import minimalJacket from "../assets/minimal-jacket.webp";
-import streetHoodie from "../assets/street-hoodie.jpg";
-import classicSneaker from "../assets/classic-sneaker.avif";
-import casualShirt from "../assets/casual-shirt.jfif";
+import minimalJacket from "@/assets/minimal-jacket.webp";
+import streetHoodie from "@/assets/street-hoodie.jpg";
+import classicSneaker from "@/assets/classic-sneaker.avif";
+import casualShirt from "@/assets/casual-shirt.jfif";
 
 interface Product {
   id: number;
