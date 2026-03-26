@@ -37,8 +37,7 @@ export function Hero() {
             transition={{ delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-foreground mb-6"
           >
-            Shop the{" "}
-            <span className="text-gradient-primary">Future</span>
+            Shop the <span className="text-gradient-primary">Future</span>
             <br />
             of Style
           </motion.h1>
@@ -50,7 +49,7 @@ export function Hero() {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 max-w-lg"
           >
-            Discover curated collections powered by AI. Premium quality, 
+            Discover curated collections powered by AI. Premium quality,
             sustainable choices, delivered to your door.
           </motion.p>
 
@@ -110,7 +109,12 @@ export function Hero() {
       <motion.div
         className="absolute top-1/4 right-1/4 hidden lg:block"
         animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.5,
+        }}
       >
         <div className="w-16 h-16 rounded-2xl bg-accent/20 backdrop-blur-xl border border-accent/10" />
       </motion.div>
