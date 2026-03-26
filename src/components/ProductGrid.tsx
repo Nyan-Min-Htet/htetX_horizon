@@ -106,7 +106,9 @@ function ProductCard({ product, index }: ProductCardProps) {
   const [isLiked, setIsLiked] = useState(false);
 
   const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100,
+      )
     : null;
 
   return (
@@ -154,9 +156,7 @@ function ProductCard({ product, index }: ProductCardProps) {
           whileTap={{ scale: 0.9 }}
         >
           <Heart
-            className={`h-4 w-4 transition-colors ${
-              isLiked ? "fill-highlight text-highlight" : "text-foreground"
-            }`}
+            className={`h-4 w-4 transition-colors ${isLiked ? "fill-highlight text-highlight" : "text-foreground"}`}
           />
         </motion.button>
 
@@ -190,7 +190,9 @@ function ProductCard({ product, index }: ProductCardProps) {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span className="text-sm font-medium text-foreground">{product.rating}</span>
+            <span className="text-sm font-medium text-foreground">
+              {product.rating}
+            </span>
           </div>
           <span className="text-sm text-muted-foreground">
             ({product.reviews.toLocaleString()} reviews)
@@ -210,7 +212,9 @@ function ProductCard({ product, index }: ProductCardProps) {
             )}
           </div>
           <span className="text-xs text-accent font-medium">
-            {product.deliveryDays === 2 ? "Tomorrow" : `${product.deliveryDays} days`}
+            {product.deliveryDays === 2
+              ? "Tomorrow"
+              : `${product.deliveryDays} days`}
           </span>
         </div>
       </div>

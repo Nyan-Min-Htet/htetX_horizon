@@ -4,7 +4,7 @@ import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { name: "New Arrivals", href: "#" },
+  { name: "New Arrivals", href: "/NewArrivals" },
   { name: "Collections", href: "#" },
   { name: "Men", href: "#" },
   { name: "Women", href: "#" },
@@ -104,7 +104,11 @@ export function Header() {
                 className="lg:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
               </Button>
             </div>
           </div>
