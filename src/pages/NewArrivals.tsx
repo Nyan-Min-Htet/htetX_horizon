@@ -1,11 +1,12 @@
-import React from "react";
+import { useState } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { motion } from "framer-motion";
 
 import minimalJacket from "@/assets/minimal-jacket.webp";
 import streetHoodie from "@/assets/street-hoodie.jpg";
 import classicSneaker from "@/assets/classic-sneaker.avif";
-import casualShirt from "@/assets/casual-shirt.jfif";
+import casualShirt from "@/assets/casual-shirt.jpg";
 
 interface Product {
   id: number;
@@ -42,6 +43,7 @@ const products: Product[] = [
 ];
 
 const NewArrivals: React.FC = () => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <>
       <Header />
@@ -54,29 +56,38 @@ const NewArrivals: React.FC = () => {
 
         {/* Product Grid */}
         <main className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-64 object-cover"
-                />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="group relative"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+                >
+                  <motion.img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-64 object-cover"
+                    animate={{ scale: isHovered ? 1.05 : 1 }}
+                    transition={{ duration: 0.4 }}
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold">{product.name}</h3>
+                    <p className="text-gray-500">{product.price}</p>
 
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold">{product.name}</h3>
-                  <p className="text-gray-500">{product.price}</p>
-
-                  <button className="mt-4 w-full bg-black text-white py-2 rounded-xl hover:bg-gray-800 transition">
-                    Add to Cart
-                  </button>
+                    <button className="mt-4 w-full bg-black text-white py-2 rounded-xl hover:bg-gray-800 transition">
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </motion.div>
         </main>
       </div>
       <Footer />
