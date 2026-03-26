@@ -70,7 +70,9 @@ export function Categories() {
                 whileHover={{ y: -4 }}
                 className={`group p-6 rounded-3xl ${styles.bg} ${styles.hover} transition-all duration-300 cursor-pointer`}
               >
-                <div className={`inline-flex p-3 rounded-2xl ${styles.bg} mb-4`}>
+                <div
+                  className={`inline-flex p-3 rounded-2xl ${styles.bg} mb-4`}
+                >
                   <Icon className={`h-6 w-6 ${styles.icon}`} />
                 </div>
                 <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
