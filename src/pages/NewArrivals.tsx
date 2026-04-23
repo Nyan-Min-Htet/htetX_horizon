@@ -11,13 +11,10 @@ import { AddProductModal } from "@/components/AddProductModal";
 import bannerImg from "@/assets/banner-new-arrivals..jfif";
 import { staticProducts } from "@/data/staticProducts";
 
-/* ------------------------ New Arrivals ------------------------ */
 export default function NewArrivals() {
-  // ---- 1️⃣   PRODUCTS (seed + any user‑added) ----
   const [products, setProducts] = useState<Product[]>([]);
   const [hasError, setHasError] = useState(false);
 
-  // Load seed + persisted custom items (localStorage)
   useEffect(() => {
     try {
       const saved =
@@ -55,7 +52,6 @@ export default function NewArrivals() {
     }),
   };
 
-  // ------------------------ RENDER ------------------------
   return (
     <>
       {/* Header */}
