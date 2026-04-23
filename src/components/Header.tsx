@@ -2,16 +2,16 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const navLinks = [
-  { name: "New Arrivals", href: "/NewArrivals" },
-  { name: "Collections", href: "#" },
-  { name: "Men", href: "#" },
-  { name: "Women", href: "#" },
-  { name: "Sale", href: "#", highlight: true },
-];
+import { NavLink } from "@/components/NavLink";
 
 export function Header() {
+  const navLinks = [
+    { name: "NewArrivals", to: "/NewArrivals" },
+    { name: "Collections", to: "/collections" },
+    { name: "Men", to: "/men" },
+    { name: "Women", to: "/women" },
+    { name: "Sale", to: "/sale", highlight: true },
+  ];
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartCount] = useState(3);
@@ -32,21 +32,15 @@ export function Header() {
             </motion.a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex gap-6">
               {navLinks.map((link) => (
-                <motion.a
+                <NavLink
                   key={link.name}
-                  href={link.href}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                    link.highlight
-                      ? "text-highlight hover:bg-highlight/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  }`}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ y: 0 }}
+                  to={link.to}
+                  highlight={link.highlight}
                 >
                   {link.name}
-                </motion.a>
+                </NavLink>
               ))}
             </nav>
 
@@ -149,17 +143,15 @@ export function Header() {
             >
               <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
                 {navLinks.map((link) => (
-                  <a
+                  <NavLink
                     key={link.name}
-                    href={link.href}
+                    to={link.to}
                     className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                       link.highlight
-                        ? "text-highlight bg-highlight/5"
-                        : "text-foreground hover:bg-secondary"
                     }`}
                   >
                     {link.name}
-                  </a>
+                  </NavLink>
                 ))}
                 <div className="pt-2 border-t border-border/50 mt-2">
                   <a

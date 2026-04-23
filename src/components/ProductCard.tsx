@@ -1,20 +1,17 @@
+// src/components/ProductCard.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, ShoppingBag, Star, Leaf, Eye } from "lucide-react";
+import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import productEarbuds from "@/assets/product-earbuds.jpg";
-import productWatch from "@/assets/product-watch.jpg";
-import productBag from "@/assets/product-bag.jpg";
-import productSunglasses from "@/assets/product-sunglasses.jpg";
-import productLamp from "@/assets/product-lamp.jpg";
-import productSneakers from "@/assets/product-sneakers.jpg";
-
+/* -------------------------------------------------
+   Product type – export it because NewArrivals needs it
+   ------------------------------------------------- */
 export interface Product {
   id: string;
   name: string;
   price: number;
-  originalPrice?: number;
+  originalPrice?: number; // optional
   image: string;
   rating: number;
   reviews: number;
@@ -24,86 +21,21 @@ export interface Product {
   deliveryDays: number;
 }
 
-const products: Product[] = [
-  {
-    id: "1",
-    name: "Wireless Pro Earbuds",
-    price: 179,
-    originalPrice: 229,
-    image: productEarbuds,
-    rating: 4.8,
-    reviews: 2341,
-    category: "Audio",
-    isNew: true,
-    isSustainable: true,
-    deliveryDays: 2,
-  },
-  {
-    id: "2",
-    name: "Chronos Smart Watch",
-    price: 449,
-    image: productWatch,
-    rating: 4.9,
-    reviews: 1892,
-    category: "Wearables",
-    isNew: true,
-    deliveryDays: 3,
-  },
-  {
-    id: "3",
-    name: "Heritage Messenger Bag",
-    price: 289,
-    image: productBag,
-    rating: 4.7,
-    reviews: 856,
-    category: "Accessories",
-    isSustainable: true,
-    deliveryDays: 4,
-  },
-  {
-    id: "4",
-    name: "Noir Gradient Sunglasses",
-    price: 159,
-    originalPrice: 199,
-    image: productSunglasses,
-    rating: 4.6,
-    reviews: 1234,
-    category: "Eyewear",
-    deliveryDays: 2,
-  },
-  {
-    id: "5",
-    name: "Arc Minimal Desk Lamp",
-    price: 129,
-    image: productLamp,
-    rating: 4.8,
-    reviews: 678,
-    category: "Home",
-    isSustainable: true,
-    deliveryDays: 5,
-  },
-  {
-    id: "6",
-    name: "Cloud Runner Sneakers",
-    price: 199,
-    image: productSneakers,
-    rating: 4.9,
-    reviews: 3456,
-    category: "Footwear",
-    isNew: true,
-    isSustainable: true,
-    deliveryDays: 3,
-  },
-];
-
+/* -------------------------------------------------
+   Props for the card component
+   ------------------------------------------------- */
 interface ProductCardProps {
   product: Product;
-  index: number;
+  index: number; // used for the stagger animation
 }
 
-function ProductCard({ product, index }: ProductCardProps) {
+/* -------------------------------------------------
+   THE CARD COMPONENT
+   ------------------------------------------------- */
+export function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  if (!product) return null;
 
   const discount = product.originalPrice
     ? Math.round(
@@ -120,8 +52,9 @@ function ProductCard({ product, index }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* ========= IMAGE & BADGES ========= */}
       <div className="relative aspect-square rounded-3xl overflow-hidden bg-secondary/50 mb-4">
-        {/* Product Image */}
+        {/* Image – scales on hover */}
         <motion.img
           src={product.image}
           alt={product.name}
@@ -130,7 +63,7 @@ function ProductCard({ product, index }: ProductCardProps) {
           transition={{ duration: 0.4 }}
         />
 
-        {/* Badges */}
+        {/* Badges (New / Discount / Sustainable) */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           {product.isNew && (
             <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
@@ -149,18 +82,20 @@ function ProductCard({ product, index }: ProductCardProps) {
           )}
         </div>
 
-        {/* Like Button */}
+        {/* ♥ Like button */}
         <motion.button
           className="absolute top-4 right-4 p-2.5 rounded-full bg-background/80 backdrop-blur-sm"
           onClick={() => setIsLiked(!isLiked)}
           whileTap={{ scale: 0.9 }}
         >
           <Heart
-            className={`h-4 w-4 transition-colors ${isLiked ? "fill-highlight text-highlight" : "text-foreground"}`}
+            className={`h-4 w-4 transition-colors ${
+              isLiked ? "fill-highlight text-highlight" : "text-foreground"
+            }`}
           />
         </motion.button>
 
-        {/* Quick Actions */}
+        {/* Quick actions (Add to Cart / View) */}
         <motion.div
           className="absolute bottom-4 left-4 right-4 flex gap-2"
           initial={{ opacity: 0, y: 10 }}
@@ -177,7 +112,7 @@ function ProductCard({ product, index }: ProductCardProps) {
         </motion.div>
       </div>
 
-      {/* Product Info */}
+      {/* ========= INFO SECTION ========= */}
       <div className="space-y-2">
         <p className="text-xs text-muted-foreground uppercase tracking-wider">
           {product.category}
@@ -219,52 +154,5 @@ function ProductCard({ product, index }: ProductCardProps) {
         </div>
       </div>
     </motion.div>
-  );
-}
-
-export function ProductGrid() {
-  return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
-          <div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-foreground mb-2"
-            >
-              Trending Now
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-muted-foreground"
-            >
-              AI-curated picks based on what's popular
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <Button variant="outline">View All Products</Button>
-          </motion.div>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }

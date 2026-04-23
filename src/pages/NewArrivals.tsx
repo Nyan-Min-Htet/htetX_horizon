@@ -1,98 +1,137 @@
-import { useState } from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+// src/pages/NewArrivals.tsx
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { ProductCard, Product } from "@/components/ProductCard";
+import { ProductBanner } from "@/components/ProductBanner";
+import { Button } from "@/components/ui/button";
+import { AddProductModal } from "@/components/AddProductModal";
 
-import minimalJacket from "@/assets/minimal-jacket.webp";
-import streetHoodie from "@/assets/street-hoodie.jpg";
-import classicSneaker from "@/assets/classic-sneaker.avif";
-import casualShirt from "@/assets/casual-shirt.jpg";
+import bannerImg from "@/assets/banner-new-arrivals..jfif";
+import { staticProducts } from "@/data/staticProducts";
 
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-}
+/* ------------------------ New Arrivals ------------------------ */
+export default function NewArrivals() {
+  // ---- 1️⃣   PRODUCTS (seed + any user‑added) ----
+  const [products, setProducts] = useState<Product[]>([]);
+  const [hasError, setHasError] = useState(false);
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Minimal Jacket",
-    price: "$89",
-    image: minimalJacket,
-  },
-  {
-    id: 2,
-    name: "Street Hoodie",
-    price: "$59",
-    image: streetHoodie,
-  },
-  {
-    id: 3,
-    name: "Classic Sneakers",
-    price: "$120",
-    image: classicSneaker,
-  },
-  {
-    id: 4,
-    name: "Casual Shirt",
-    price: "$45",
-    image: casualShirt,
-  },
-];
+  // Load seed + persisted custom items (localStorage)
+  useEffect(() => {
+    try {
+      const saved =
+        typeof window !== "undefined"
+          ? localStorage.getItem("newArrivalsCustom")
+          : null;
+      const custom: Product[] = saved ? JSON.parse(saved) : [];
+      setProducts([...staticProducts, ...custom]); // <-- always an array of Product objects
+    } catch (e) {
+      console.error("❌ Failed to load New Arrivals data:", e);
+      setHasError(true);
+      setProducts(staticProducts); // fallback to seed only
+    }
+  }, []);
 
-const NewArrivals: React.FC = () => {
-  const [isHovered, setIsHovered] = useState(false);
+  // ---- 2️⃣   MODAL state ----
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  // When the modal returns a brand‑new product, prepend it to the list
+  const handleAddProduct = (newProd: Product) =>
+    setProducts((prev) => [newProd, ...prev]);
+
+  // ---- 3️⃣   FILTER “new” items only ----
+  const newProducts = products.filter((p) => p.isNew);
+
+  // ---- 4️⃣   animation variants (optional) ----
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.05 },
+    }),
+  };
+
+  // ------------------------ RENDER ------------------------
   return (
     <>
+      {/* Header */}
       <Header />
-      <div className="bg-gray-50 min-h-screen">
-        {/* Hero Section */}
-        <section className="bg-black text-white py-20 text-center">
-          <h2 className="text-5xl font-bold mb-4">Fresh Drops Just Landed</h2>
-          <p className="text-gray-300">Explore the latest trends and styles</p>
-        </section>
 
-        {/* Product Grid */}
-        <main className="max-w-7xl mx-auto px-6 py-12">
+      {/* Hero banner */}
+      <ProductBanner
+        image={bannerImg}
+        title="Fresh Drops"
+        subtitle="Discover the newest gear for every lifestyle"
+        ctaLabel="Shop New Arrivals"
+        onCtaClick={() => {
+          const el = document.getElementById("new-arrivals-grid");
+          el?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
+
+      {/* Main grid & title */}
+      <section className="py-20 bg-background" id="new-arrivals-grid">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* – Title + “Add New” button – */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="group relative"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12"
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-                >
-                  <motion.img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-64 object-cover"
-                    animate={{ scale: isHovered ? 1.05 : 1 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold">{product.name}</h3>
-                    <p className="text-gray-500">{product.price}</p>
+            <div>
+              <motion.h2
+                className="text-3xl md:text-4xl font-bold text-foreground mb-2"
+                variants={sectionVariants}
+                custom={1}
+              >
+                New Arrivals
+              </motion.h2>
+              <motion.p
+                className="text-muted-foreground"
+                variants={sectionVariants}
+                custom={2}
+              >
+                Hand‑picked fresh releases – just added to our catalog.
+              </motion.p>
+            </div>
 
-                    <button className="mt-4 w-full bg-black text-white py-2 rounded-xl hover:bg-gray-800 transition">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div className="flex gap-4">
+              <Button onClick={openModal}>Add New Product</Button>
+              <Button variant="outline">View All Products</Button>
             </div>
           </motion.div>
-        </main>
-      </div>
+
+          {/* ---------- GRID ---------- */}
+          {newProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {newProducts.map((product, idx) => (
+                <ProductCard key={product.id} product={product} index={idx} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20 text-muted-foreground">
+              No new arrivals at the moment – check back soon!
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Footer */}
       <Footer />
+
+      {/* Add‑Product modal (always rendered, hidden when closed) */}
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onAdd={handleAddProduct}
+      />
     </>
   );
-};
-
-export default NewArrivals;
+}
