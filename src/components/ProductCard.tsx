@@ -1,4 +1,3 @@
-// src/components/ProductCard.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";

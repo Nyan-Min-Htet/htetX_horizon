@@ -1,4 +1,3 @@
-// src/pages/NewArrivals.tsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
