@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard, Product } from "@/components/ProductCard";
 import { ProductBanner } from "@/components/ProductBanner";
 import { Button } from "@/components/ui/button";
-import { AddProductModal } from "@/components/AddProductModal";
+// import { AddProductModal } from "@/components/AddProductModal";
 
 import bannerImg from "@/assets/banner-new-arrivals..jfif";
 import { staticProducts } from "@/data/staticProducts";
@@ -22,27 +22,24 @@ export default function NewArrivals() {
           ? localStorage.getItem("newArrivalsCustom")
           : null;
       const custom: Product[] = saved ? JSON.parse(saved) : [];
-      setProducts([...staticProducts, ...custom]); // <-- always an array of Product objects
+      setProducts([...staticProducts, ...custom]);
     } catch (e) {
       console.error("❌ Failed to load New Arrivals data:", e);
       setHasError(true);
-      setProducts(staticProducts); // fallback to seed only
+      setProducts(staticProducts);
     }
   }, []);
 
   // ---- 2️⃣   MODAL state ----
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const openModal = () => setIsModalOpen(true);
+  // const closeModal = () => setIsModalOpen(false);
 
   // When the modal returns a brand‑new product, prepend it to the list
-  const handleAddProduct = (newProd: Product) =>
-    setProducts((prev) => [newProd, ...prev]);
-
-  // ---- 3️⃣   FILTER “new” items only ----
+  // const handleAddProduct = (newProd: Product) =>
+  //   setProducts((prev) => [newProd, ...prev]);
   const newProducts = products.filter((p) => p.isNew);
 
-  // ---- 4️⃣   animation variants (optional) ----
   const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
@@ -54,10 +51,8 @@ export default function NewArrivals() {
 
   return (
     <>
-      {/* Header */}
       <Header />
 
-      {/* Hero banner */}
       <ProductBanner
         image={bannerImg}
         title="Fresh Drops"
@@ -99,7 +94,7 @@ export default function NewArrivals() {
             </div>
 
             <div className="flex gap-4">
-              <Button onClick={openModal}>Add New Product</Button>
+              {/* <Button onClick={openModal}>Add New Product</Button> */}
               <Button variant="outline">View All Products</Button>
             </div>
           </motion.div>
@@ -119,15 +114,14 @@ export default function NewArrivals() {
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
 
       {/* Add‑Product modal (always rendered, hidden when closed) */}
-      <AddProductModal
+      {/* <AddProductModal
         isOpen={isModalOpen}
         onClose={closeModal}
         onAdd={handleAddProduct}
-      />
+      /> */}
     </>
   );
 }
