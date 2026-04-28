@@ -13,10 +13,10 @@ const footerLinks = {
     { name: "Shipping", href: "#" },
     { name: "Returns", href: "#" },
     { name: "FAQ", href: "#" },
-    { name: "Contact Us", href: "#" },
+    { name: "Contact Us", href: "/contact-us" },
   ],
   company: [
-    { name: "About Us", href: "#" },
+    { name: "About Us", href: "/about-us" },
     { name: "Sustainability", href: "#" },
     { name: "Careers", href: "#" },
     { name: "Press", href: "#" },
@@ -46,7 +46,8 @@ export function Footer() {
               Join the HtetX Community
             </h3>
             <p className="text-background/60 mb-8">
-              Subscribe for exclusive offers, new releases, and 10% off your first order.
+              Subscribe for exclusive offers, new releases, and 10% off your
+              first order.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
@@ -68,11 +69,15 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <a href="/" className="text-2xl font-bold text-gradient-primary mb-4 inline-block">
+            <a
+              href="/"
+              className="text-2xl font-bold text-gradient-primary mb-4 inline-block"
+            >
               HtetX
             </a>
             <p className="text-background/60 text-sm mb-6 max-w-xs">
-              Redefining eCommerce with AI-powered personalization and sustainable choices.
+              Redefining eCommerce with AI-powered personalization and
+              sustainable choices.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => (
@@ -147,10 +152,16 @@ export function Footer() {
               © 2026 HtetX. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-sm text-background/40 hover:text-background/60 transition-colors">
+              <a
+                href="#"
+                className="text-sm text-background/40 hover:text-background/60 transition-colors"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="text-sm text-background/40 hover:text-background/60 transition-colors">
+              <a
+                href="#"
+                className="text-sm text-background/40 hover:text-background/60 transition-colors"
+              >
                 Terms of Service
               </a>
             </div>
