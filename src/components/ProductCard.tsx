@@ -3,9 +3,6 @@ import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/* -------------------------------------------------
-   Product type – export it because NewArrivals needs it
-   ------------------------------------------------- */
 export interface Product {
   id: string;
   name: string;

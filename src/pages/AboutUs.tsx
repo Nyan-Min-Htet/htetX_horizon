@@ -1,4 +1,3 @@
-// src/pages/AboutUs.tsx
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TeamSection } from "@/components/TeamSection";
