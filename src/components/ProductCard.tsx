@@ -20,10 +20,9 @@ export interface Product {
 interface ProductCardProps {
   product: Product;
   index: number;
-  variant?: "grid" | "list";
 }
 
-export function ProductCard({ product, index, variant = "grid" }: ProductCardProps) {
+export function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -40,22 +39,12 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className={
-        variant === "list"
-          ? "group relative gap-6 rounded-3xl border border-border bg-card p-4 shadow-card md:flex"
-          : "group relative"
-      }
+      className="group relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image */}
-      <div
-        className={
-          variant === "list"
-            ? "relative mb-4 aspect-square overflow-hidden rounded-3xl bg-secondary/50 md:mb-0 md:w-56 md:shrink-0"
-            : "relative mb-4 aspect-square overflow-hidden rounded-3xl bg-secondary/50"
-        }
-      >
+      <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-100 mb-4">
         <motion.img
           src={product.image}
           alt={product.name}
@@ -67,17 +56,17 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           {product.isNew && (
-            <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+            <span className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold">
               New
             </span>
           )}
           {discount && (
-            <span className="px-3 py-1 rounded-full bg-highlight text-highlight-foreground text-xs font-semibold">
+            <span className="px-3 py-1 rounded-full bg-red-500 text-white text-xs font-semibold">
               -{discount}%
             </span>
           )}
           {product.isSustainable && (
-            <span className="p-1.5 rounded-full bg-accent text-accent-foreground">
+            <span className="p-1.5 rounded-full bg-green-500 text-white">
               <Leaf className="h-3 w-3" />
             </span>
           )}
@@ -85,12 +74,14 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
 
         {/* Like Button */}
         <motion.button
-          className="absolute top-4 right-4 p-2.5 rounded-full bg-background/80 backdrop-blur-sm"
+          className="absolute top-4 right-4 p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm"
           onClick={() => setIsLiked(!isLiked)}
           whileTap={{ scale: 0.9 }}
         >
           <Heart
-            className={`h-4 w-4 transition-colors ${isLiked ? "fill-highlight text-highlight" : "text-foreground"}`}
+            className={`h-4 w-4 transition-colors ${
+              isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
+            }`}
           />
         </motion.button>
 
@@ -101,22 +92,28 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
           animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
           transition={{ duration: 0.2 }}
         >
-          <Button variant="glass" className="flex-1" size="sm">
+          <Button
+            className="flex-1 bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
+            size="sm"
+          >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>
-          <Button variant="glass" size="icon" className="h-9 w-9">
+          <Button
+            className="bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
+            size="icon"
+          >
             <Eye className="h-4 w-4" />
           </Button>
         </motion.div>
       </div>
 
       {/* Product Info */}
-      <div className={variant === "list" ? "flex flex-1 flex-col justify-center space-y-3" : "space-y-2"}>
-        <p className="text-xs text-muted-foreground uppercase tracking-wider">
+      <div className="space-y-2">
+        <p className="text-xs text-gray-500 uppercase tracking-wider">
           {product.category}
         </p>
-        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
           {product.name}
         </h3>
 
@@ -124,11 +121,11 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-sm font-medium text-gray-900">
               {product.rating}
             </span>
           </div>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-gray-500">
             ({product.reviews.toLocaleString()} reviews)
           </span>
         </div>
@@ -136,16 +133,16 @@ export function ProductCard({ product, index, variant = "grid" }: ProductCardPro
         {/* Price & Delivery */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-foreground">
+            <span className="text-lg font-bold text-gray-900">
               ${product.price}
             </span>
             {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-sm text-gray-500 line-through">
                 ${product.originalPrice}
               </span>
             )}
           </div>
-          <span className="text-xs text-accent font-medium">
+          <span className="text-xs text-green-600 font-medium">
             {product.deliveryDays === 2
               ? "Tomorrow"
               : `${product.deliveryDays} days`}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ProductCard, Product } from "./ProductCard";
 import { FilterSidebar } from "./FilterSidebar";
@@ -9,7 +9,7 @@ interface ProductGridProps {
   title: string;
   products: Product[];
   showFilters?: boolean;
-  theme?: "light" | "dark";
+  theme?: "light" | "blue";
 }
 
 export function ProductGrid({
@@ -19,13 +19,49 @@ export function ProductGrid({
   theme = "light",
 }: ProductGridProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("newest");
+  const [activeFilters, setActiveFilters] = useState(0);
 
-  const bgColor = theme === "dark" ? "bg-gray-900" : "bg-background";
-  const textColor = theme === "dark" ? "text-white" : "text-foreground";
-  const mutedColor =
-    theme === "dark" ? "text-gray-300" : "text-muted-foreground";
+  const bgColor = theme === "blue" ? "bg-blue-50" : "bg-white";
+  const textColor = theme === "blue" ? "text-gray-900" : "text-gray-900";
+  const mutedColor = theme === "blue" ? "text-gray-600" : "text-gray-600";
+
+  // Sort products function
+  const sortedProducts = useMemo(() => {
+    const sorted = [...products];
+
+    switch (sortBy) {
+      case "price-low":
+        return sorted.sort((a, b) => a.price - b.price);
+      case "price-high":
+        return sorted.sort((a, b) => b.price - a.price);
+      case "rating":
+        return sorted.sort((a, b) => b.rating - a.rating);
+      case "newest":
+      default:
+        return sorted.sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return b.id.localeCompare(a.id);
+        });
+    }
+  }, [products, sortBy]);
+
+  type FilterValues = {
+    [key: string]: unknown;
+  };
+
+  const handleFilterApply = (filters: FilterValues) => {
+    const count = Object.values(filters).reduce(
+      (total: number, current: unknown) => {
+        if (Array.isArray(current)) return total + current.length;
+        return total;
+      },
+      0,
+    );
+    setActiveFilters(Number(count));
+    setIsFilterOpen(false);
+  };
 
   return (
     <section className={`py-16 ${bgColor}`}>
@@ -43,58 +79,34 @@ export function ProductGrid({
 
           <div className="flex items-center gap-4">
             {/* Sort Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className={`px-3 py-2 rounded-lg border ${
-                theme === "dark"
-                  ? "bg-gray-800 border-gray-700 text-white"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <option value="newest">Newest First</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Rated</option>
-            </select>
-
-            {/* View Toggle */}
-            <div
-              className={`flex rounded-lg p-1 ${
-                theme === "dark" ? "bg-gray-800" : "bg-gray-100"
-              }`}
-            >
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-md ${
-                  viewMode === "grid"
-                    ? "bg-white text-foreground shadow-sm"
-                    : mutedColor
-                }`}
+            <div className="flex items-center gap-2">
+              <span className={`text-sm ${mutedColor}`}>Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className={`px-3 py-2 rounded-lg border text-sm bg-white border-gray-300 text-gray-900`}
               >
-                <Grid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-md ${
-                  viewMode === "list"
-                    ? "bg-white text-foreground shadow-sm"
-                    : mutedColor
-                }`}
-              >
-                <List className="h-4 w-4" />
-              </button>
+                <option value="newest">Newest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+              </select>
             </div>
 
             {/* Filter Button */}
             {showFilters && (
               <Button
-                variant="outline"
+                variant={activeFilters > 0 ? "default" : "outline"}
                 className="gap-2"
                 onClick={() => setIsFilterOpen(true)}
               >
                 <Filter className="h-4 w-4" />
                 Filters
+                {activeFilters > 0 && (
+                  <span className="bg-white text-blue-600 px-2 py-1 rounded-full text-xs">
+                    {activeFilters}
+                  </span>
+                )}
               </Button>
             )}
           </div>
@@ -107,6 +119,7 @@ export function ProductGrid({
             <FilterSidebar
               isOpen={isFilterOpen}
               onClose={() => setIsFilterOpen(false)}
+              onApply={handleFilterApply}
               options={{
                 categories: ["Clothing", "Footwear", "Accessories", "Watches"],
                 sizes: ["S", "M", "L", "XL", "XXL"],
@@ -119,15 +132,9 @@ export function ProductGrid({
 
           {/* Products Grid */}
           <div className="flex-1">
-            {products.length > 0 ? (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-                    : "space-y-6"
-                }
-              >
-                {products.map((product, index) => (
+            {sortedProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                {sortedProducts.map((product, index) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -144,9 +151,13 @@ export function ProductGrid({
         </div>
 
         {/* Load More Button */}
-        {products.length > 0 && (
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="py-3">
+        {sortedProducts.length > 0 && (
+          <div className="text-center mt-7">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50 py-4"
+            >
               Load More Products
             </Button>
           </div>
