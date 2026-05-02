@@ -1,9 +1,9 @@
-// src/components/ProductGrid.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ProductCard, Product } from "./ProductCard";
+import { FilterSidebar } from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
-import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
+import { Filter, Grid, List } from "lucide-react";
 
 interface ProductGridProps {
   title: string;
@@ -18,6 +18,7 @@ export function ProductGrid({
   showFilters = false,
   theme = "light",
 }: ProductGridProps) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("newest");
 
@@ -87,44 +88,65 @@ export function ProductGrid({
 
             {/* Filter Button */}
             {showFilters && (
-              <Button variant="outline" className="gap-2">
-                <SlidersHorizontal className="h-4 w-4" />
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setIsFilterOpen(true)}
+              >
+                <Filter className="h-4 w-4" />
                 Filters
               </Button>
             )}
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="flex-1">
-          {products.length > 0 ? (
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-                  : "space-y-6"
-              }
-            >
-              {products.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  variant={viewMode}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className={mutedColor}>No products found</p>
-            </div>
+        {/* Content Area */}
+        <div className="flex gap-8">
+          {/* Filter Sidebar */}
+          {showFilters && (
+            <FilterSidebar
+              isOpen={isFilterOpen}
+              onClose={() => setIsFilterOpen(false)}
+              options={{
+                categories: ["Clothing", "Footwear", "Accessories", "Watches"],
+                sizes: ["S", "M", "L", "XL", "XXL"],
+                colors: ["Black", "Blue", "White", "Red", "Green"],
+                priceRange: { min: 0, max: 1000 },
+              }}
+              theme={theme}
+            />
           )}
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            {products.length > 0 ? (
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+                    : "space-y-6"
+                }
+              >
+                {products.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className={mutedColor}>No products found</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Load More Button */}
         {products.length > 0 && (
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" className="py-3">
               Load More Products
             </Button>
           </div>
