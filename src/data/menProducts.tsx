@@ -54,7 +54,7 @@ export const menProducts: Product[] = [
     name: "Casual Chino Pants",
     price: 79,
     image:
-      "https://images.unsplash.com/photo-1542272454315-4db12cbd42e6?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&h=400&fit=crop",
     rating: 4.6,
     reviews: 167,
     category: "Clothing",

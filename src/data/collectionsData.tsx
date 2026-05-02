@@ -53,7 +53,7 @@ export const collectionsData: Collection[] = [
     name: "Best Sellers",
     description: "Customer favorites that everyone loves",
     image:
-      "https://images.unsplash.com/photo-1556906781-2f0520405b71?w=800&h=400&fit=crop",
+      "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop",
     count: 18,
     theme: "bg-gradient-to-r from-amber-50 to-orange-50",
     products: [
@@ -100,7 +100,7 @@ export const collectionsData: Collection[] = [
     name: "Sale",
     description: "Special offers and discounted items",
     image:
-      "https://images.unsplash.com/photo-1608508618512-5d3c3c63a308?w=800&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?w=800&h=400&fit=crop",
     count: 8,
     theme: "bg-gradient-to-r from-red-50 to-pink-50",
     products: [

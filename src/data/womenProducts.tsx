@@ -54,7 +54,7 @@ export const womenProducts: Product[] = [
     name: "Statement Necklace",
     price: 45,
     image:
-      "https://images.unsplash.com/photo-1590649880760-2d4b0f523de7?w=400&h=400&fit=crop",
+      "https://images.pexels.com/photos/965981/pexels-photo-965981.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
     rating: 4.5,
     reviews: 156,
     category: "Accessories",
