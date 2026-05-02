@@ -1,31 +1,23 @@
+// src/components/ProductGrid.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ProductCard, Product } from "@/components/ProductCard";
+import { ProductCard, Product } from "./ProductCard";
 import { Button } from "@/components/ui/button";
 import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
-import { FilterSidebar } from "./FilterSidebar";
 
-interface ProductGridSectionProps {
+interface ProductGridProps {
   title: string;
   products: Product[];
   showFilters?: boolean;
   theme?: "light" | "dark";
-  filterOptions?: {
-    categories?: string[];
-    sizes?: string[];
-    colors?: string[];
-    priceRange?: { min: number; max: number };
-  };
 }
 
-export function ProductGridSection({
+export function ProductGrid({
   title,
   products,
   showFilters = false,
   theme = "light",
-  filterOptions,
-}: ProductGridSectionProps) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+}: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("newest");
 
@@ -95,11 +87,7 @@ export function ProductGridSection({
 
             {/* Filter Button */}
             {showFilters && (
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={() => setIsFilterOpen(true)}
-              >
+              <Button variant="outline" className="gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
                 Filters
               </Button>
@@ -107,43 +95,30 @@ export function ProductGridSection({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex gap-8">
-          {/* Filter Sidebar */}
-          {showFilters && (
-            <FilterSidebar
-              isOpen={isFilterOpen}
-              onClose={() => setIsFilterOpen(false)}
-              options={filterOptions}
-              theme={theme}
-            />
+        {/* Products Grid */}
+        <div className="flex-1">
+          {products.length > 0 ? (
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+                  : "space-y-6"
+              }
+            >
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  variant={viewMode}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className={mutedColor}>No products found</p>
+            </div>
           )}
-
-          {/* Products Grid */}
-          <div className="flex-1">
-            {products.length > 0 ? (
-              <div
-                className={
-                  viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-                    : "space-y-6"
-                }
-              >
-                {products.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    index={index}
-                    variant={viewMode}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <p className={mutedColor}>No products found</p>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Load More Button */}

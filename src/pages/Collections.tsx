@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CategoryHero } from "@/components/CategoryHero";
-import { ProductGridSection } from "@/components/ProductGridSection";
+import { ProductGrid } from "@/components/ProductGrid";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -36,8 +36,7 @@ export default function Collections() {
               Browse Categories
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our carefully organized collections to find exactly what
-              you're looking for
+              Explore our carefully organized collections
             </p>
           </motion.div>
 
@@ -57,7 +56,6 @@ export default function Collections() {
                     alt={collection.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
                 </div>
 
                 <div className="text-center">
@@ -85,28 +83,20 @@ export default function Collections() {
             ))}
           </div>
 
-          {/* Featured Products from Selected Collection */}
-          {activeCollection !== "All" && (
-            <ProductGridSection
-              title={activeCollection}
-              products={
-                collectionsData.find((c) => c.name === activeCollection)
-                  ?.products || []
-              }
-              showFilters={true}
-              theme="light"
-            />
-          )}
-
-          {/* All Products */}
-          {activeCollection === "All" && (
-            <ProductGridSection
-              title="All Collections"
-              products={collectionsData.flatMap((c) => c.products)}
-              showFilters={true}
-              theme="light"
-            />
-          )}
+          {/* Products Grid */}
+          <ProductGrid
+            title={
+              activeCollection === "All" ? "All Collections" : activeCollection
+            }
+            products={
+              activeCollection === "All"
+                ? collectionsData.flatMap((c) => c.products)
+                : collectionsData.find((c) => c.name === activeCollection)
+                    ?.products || []
+            }
+            showFilters={true}
+            theme="light"
+          />
         </div>
       </section>
 

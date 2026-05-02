@@ -1,4 +1,3 @@
-// src/components/FilterSidebar.tsx
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";

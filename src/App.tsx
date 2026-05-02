@@ -9,6 +9,9 @@ import NotFound from "./pages/NotFound";
 import NewArrivals from "./pages/NewArrivals";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import Collections from "./pages/Collections";
+import Men from "./pages/Men";
+import Women from "./pages/Women";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,9 @@ const App = () => (
           <Route path="/NewArrivals" element={<NewArrivals />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/collections" element={<Collections />} />
+          <Route path="/men" element={<Men />} />
+          <Route path="/women" element={<Women />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
