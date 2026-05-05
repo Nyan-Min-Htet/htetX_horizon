@@ -22,7 +22,7 @@ export default function Women() {
       <CategoryHero
         title="Women's Collection"
         subtitle="Where elegance meets comfort"
-        image="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=1200&h=600&fit=crop"
+        image="https://thumbs.dreamstime.com/b/clothes-hangers-colorful-clothes-women-shop-summer-sale-73852501.jpg?w=1200&h=600&fit=crop"
         theme="bg-gradient-to-r from-pink-50 to-purple-50"
       />
 
