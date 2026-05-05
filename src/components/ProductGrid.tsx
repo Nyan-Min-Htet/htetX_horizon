@@ -47,21 +47,21 @@ export function ProductGrid({
     }
   }, [products, sortBy]);
 
-  type FilterValues = {
-    [key: string]: unknown;
-  };
+  // type FilterValues = {
+  //   [key: string]: unknown;
+  // };
 
-  const handleFilterApply = (filters: FilterValues) => {
-    const count = Object.values(filters).reduce(
-      (total: number, current: unknown) => {
-        if (Array.isArray(current)) return total + current.length;
-        return total;
-      },
-      0,
-    );
-    setActiveFilters(Number(count));
-    setIsFilterOpen(false);
-  };
+  // const handleFilterApply = (filters: FilterValues) => {
+  //   const count = Object.values(filters).reduce(
+  //     (total: number, current: unknown) => {
+  //       if (Array.isArray(current)) return total + current.length;
+  //       return total;
+  //     },
+  //     0,
+  //   );
+  //   setActiveFilters(Number(count));
+  //   setIsFilterOpen(false);
+  // };
 
   return (
     <section className={`py-16 ${bgColor}`}>
@@ -94,7 +94,7 @@ export function ProductGrid({
             </div>
 
             {/* Filter Button */}
-            {showFilters && (
+            {/* {showFilters && (
               <Button
                 variant={activeFilters > 0 ? "default" : "outline"}
                 className="gap-2"
@@ -108,14 +108,14 @@ export function ProductGrid({
                   </span>
                 )}
               </Button>
-            )}
+            )} */}
           </div>
         </div>
 
         {/* Content Area */}
         <div className="flex gap-8">
           {/* Filter Sidebar */}
-          {showFilters && (
+          {/* {showFilters && (
             <FilterSidebar
               isOpen={isFilterOpen}
               onClose={() => setIsFilterOpen(false)}
@@ -128,7 +128,7 @@ export function ProductGrid({
               }}
               theme={theme}
             />
-          )}
+          )} */}
 
           {/* Products Grid */}
           <div className="flex-1">
