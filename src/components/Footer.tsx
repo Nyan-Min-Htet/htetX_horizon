@@ -7,12 +7,12 @@ const footerLinks = {
     { name: "New Arrivals", href: "#" },
     { name: "Best Sellers", href: "#" },
     { name: "Sale", href: "#" },
-    { name: "Collections", href: "#" },
+    { name: "Collections", href: "/collections" },
   ],
   help: [
     { name: "Shipping", href: "#" },
     { name: "Returns", href: "#" },
-    { name: "FAQ", href: "#" },
+    { name: "FAQ", href: "/faq" },
     { name: "Contact Us", href: "/contact-us" },
   ],
   company: [
