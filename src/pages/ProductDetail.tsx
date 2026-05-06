@@ -313,7 +313,7 @@ export default function ProductDetail() {
           <div className="relative md:hidden bg-white/90 backdrop-blur-sm p-4">
             <Button
               size="lg"
-              className="w-100 bg-blue-600 text-white hover:bg-blue-700"
+              className="w-100  py-2 px-10 bg-blue-600 text-white hover:bg-blue-700"
             >
               Add to Cart
             </Button>
