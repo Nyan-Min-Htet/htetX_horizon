@@ -310,10 +310,10 @@ export default function ProductDetail() {
           </div>
 
           {/* ---------- Mobile‑only sticky CTA ---------- */}
-          <div className="relative md:hidden bg-white/90 backdrop-blur-sm p-4">
+          <div className="relative md:hidden p-4 mt-6">
             <Button
               size="lg"
-              className="w-100  py-2 px-10 bg-blue-600 text-white hover:bg-blue-700"
+              className="w-100 py-2 px-10 bg-blue-600 text-white hover:bg-blue-700"
             >
               Add to Cart
             </Button>
