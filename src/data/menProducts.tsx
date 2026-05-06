@@ -1,6 +1,11 @@
 import { Product } from "@/components/ProductCard";
 
-export const menProducts: Product[] = [
+interface ProductWithDetails extends Product {
+  description?: string;
+  specs?: { label: string; value: string }[];
+}
+
+export const menProducts: ProductWithDetails[] = [
   {
     id: "men-1",
     name: "Classic Denim Jacket",
@@ -13,6 +18,13 @@ export const menProducts: Product[] = [
     category: "Clothing",
     isNew: true,
     deliveryDays: 3,
+    description:
+      "A timeless denim jacket with a modern cut, button‑front closure and two chest pockets.",
+    specs: [
+      { label: "Material", value: "100 % Cotton Denim" },
+      { label: "Fit", value: "Regular" },
+      { label: "Care", value: "Machine wash cold" },
+    ],
   },
   {
     id: "men-2",
@@ -25,10 +37,17 @@ export const menProducts: Product[] = [
     category: "Footwear",
     isSustainable: true,
     deliveryDays: 4,
+    description:
+      "Hand‑crafted full‑grain leather oxfords with a cushioned insole and Goodyear welt construction.",
+    specs: [
+      { label: "Upper", value: "Full‑grain leather" },
+      { label: "Sole", value: "Leather + Rubber" },
+      { label: "Fit", value: "True to size" },
+    ],
   },
   {
     id: "men-3",
-    name: "Sports Performance T-Shirt",
+    name: "Sports Performance T‑Shirt",
     price: 45,
     image:
       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
@@ -36,6 +55,13 @@ export const menProducts: Product[] = [
     reviews: 89,
     category: "Clothing",
     deliveryDays: 2,
+    description:
+      "Moisture‑wicking, four‑way stretch tee designed for high‑intensity workouts.",
+    specs: [
+      { label: "Fabric", value: "Polyester‑Elastane blend" },
+      { label: "Fit", value: "Athletic" },
+      { label: "UV Protection", value: "UPF 30+" },
+    ],
   },
   {
     id: "men-4",
@@ -48,6 +74,14 @@ export const menProducts: Product[] = [
     reviews: 312,
     category: "Accessories",
     deliveryDays: 5,
+    description:
+      "Swiss‑made automatic watch with sapphire crystal, leather strap and a 42 mm case.",
+    specs: [
+      { label: "Movement", value: "Automatic" },
+      { label: "Case Diameter", value: "42 mm" },
+      { label: "Crystal", value: "Sapphire" },
+      { label: "Water Resistance", value: "100 m" },
+    ],
   },
   {
     id: "men-5",
@@ -59,6 +93,13 @@ export const menProducts: Product[] = [
     reviews: 167,
     category: "Clothing",
     deliveryDays: 3,
+    description:
+      "Classic chino with a tapered leg, hidden button‑fly and side‑slash pockets.",
+    specs: [
+      { label: "Fabric", value: "Cotton‑Elastane twill" },
+      { label: "Inseam", value: "32 in" },
+      { label: "Care", value: "Machine wash warm" },
+    ],
   },
   {
     id: "men-6",
@@ -72,5 +113,12 @@ export const menProducts: Product[] = [
     category: "Footwear",
     isNew: true,
     deliveryDays: 2,
+    description:
+      "Lightweight neutral‑support running shoe with breathable mesh upper and responsive foam midsole.",
+    specs: [
+      { label: "Drop", value: "8 mm" },
+      { label: "Weight", value: "260 g (men’s 9)" },
+      { label: "Terrain", value: "Road" },
+    ],
   },
 ];

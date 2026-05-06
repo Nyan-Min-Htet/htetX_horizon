@@ -13,6 +13,7 @@ import Collections from "./pages/Collections";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
 import FAQ from "./pages/FAQ";
+import ProductDetail from "./pages/ProductDetail";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/men" element={<Men />} />
           <Route path="/women" element={<Women />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

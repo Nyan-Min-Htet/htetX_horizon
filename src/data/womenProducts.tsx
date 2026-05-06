@@ -1,6 +1,11 @@
 import { Product } from "@/components/ProductCard";
 
-export const womenProducts: Product[] = [
+interface ProductWithDetails extends Product {
+  description?: string;
+  specs?: { label: string; value: string }[];
+}
+
+export const womenProducts: ProductWithDetails[] = [
   {
     id: "women-1",
     name: "Elegant Summer Dress",
@@ -13,6 +18,13 @@ export const womenProducts: Product[] = [
     category: "Dresses",
     isNew: true,
     deliveryDays: 3,
+    description:
+      "Flowy midi dress in lightweight viscose with a subtle floral print and adjustable tie‑waist.",
+    specs: [
+      { label: "Fabric", value: "Viscose‑Elastane blend" },
+      { label: "Length", value: "Midi (≈45 in)" },
+      { label: "Care", value: "Hand wash cold" },
+    ],
   },
   {
     id: "women-2",
@@ -25,6 +37,13 @@ export const womenProducts: Product[] = [
     category: "Accessories",
     isSustainable: true,
     deliveryDays: 4,
+    description:
+      "Structured top‑handle bag in full‑grain leather with interior zip pocket and gold‑tone hardware.",
+    specs: [
+      { label: "Material", value: "Full‑grain leather" },
+      { label: "Dimensions", value: "30 × 20 × 12 cm" },
+      { label: "Weight", value: "0.85 kg" },
+    ],
   },
   {
     id: "women-3",
@@ -36,10 +55,17 @@ export const womenProducts: Product[] = [
     reviews: 192,
     category: "Tops",
     deliveryDays: 2,
+    description:
+      "Luxurious 100 % silk blouse with a relaxed fit, hidden button placket and subtle sheen.",
+    specs: [
+      { label: "Fabric", value: "100 % Silk" },
+      { label: "Fit", value: "Relaxed" },
+      { label: "Care", value: "Dry clean only" },
+    ],
   },
   {
     id: "women-4",
-    name: "High-Waisted Jeans",
+    name: "High‑Waisted Jeans",
     price: 79,
     originalPrice: 99,
     image:
@@ -48,6 +74,13 @@ export const womenProducts: Product[] = [
     reviews: 234,
     category: "Bottoms",
     deliveryDays: 3,
+    description:
+      "High‑waisted, straight‑leg denim with a five‑pocket design and subtle whiskering.",
+    specs: [
+      { label: "Fabric", value: "99 % Cotton, 1 % Elastane" },
+      { label: "Inseam", value: "30 in" },
+      { label: "Care", value: "Machine wash cold" },
+    ],
   },
   {
     id: "women-5",
@@ -60,6 +93,13 @@ export const womenProducts: Product[] = [
     category: "Accessories",
     isNew: true,
     deliveryDays: 2,
+    description:
+      "Bold statement necklace featuring oversized crystal beads and a adjustable chain.",
+    specs: [
+      { label: "Main Material", value: "Crystal & Alloy" },
+      { label: "Length", value: "16‑24 in (adjustable)" },
+      { label: "Care", value: "Wipe with soft cloth" },
+    ],
   },
   {
     id: "women-6",
@@ -71,5 +111,12 @@ export const womenProducts: Product[] = [
     reviews: 189,
     category: "Footwear",
     deliveryDays: 4,
+    description:
+      "Block‑heel pump with cushioned insole, soft suede upper and a versatile almond toe.",
+    specs: [
+      { label: "Heel Height", value: "2.5 in" },
+      { label: "Upper", value: "Suede" },
+      { label: "Fit", value: "True to size" },
+    ],
   },
 ];

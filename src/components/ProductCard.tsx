@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export interface Product {
@@ -99,12 +100,15 @@ export function ProductCard({ product, index }: ProductCardProps) {
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>
-          <Button
-            className="bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
-            size="icon"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
+          <Link to={`/product/${product.id}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
 
