@@ -1,3 +1,4 @@
+import { Product } from "@/components/ProductCard";
 import productEarbuds from "@/assets/product-earbuds.jpg";
 import productWatch from "@/assets/product-watch.jpg";
 import productBag from "@/assets/product-bag.jpg";
@@ -6,14 +7,7 @@ import productLamp from "@/assets/product-lamp.jpg";
 import productSneakers from "@/assets/product-sneakers.jpg";
 import classicSneaker from "@/assets/classic-sneaker.avif";
 
-import type { Product } from "@/components/ProductCard";
-
-interface ProductWithDetails extends Product {
-  description?: string;
-  specs?: { label: string; value: string }[];
-}
-
-export const staticProducts: ProductWithDetails[] = [
+export const staticProducts: Product[] = [
   {
     id: "1",
     name: "Wireless Pro Earbuds",
@@ -26,12 +20,24 @@ export const staticProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 2,
     description:
-      "High‑fidelity wireless earbuds with ANC, touch controls and a compact charging case.",
+      "Experience studio-quality sound with our Pro Earbuds. Featuring Advanced Active Noise Cancellation (ANC) and a transparent mode, these earbuds allow you to switch between immersive music and the world around you instantly.",
     specs: [
-      { label: "Driver", value: "12 mm" },
-      { label: "Battery Life", value: "5 hrs (ANC on)" },
-      { label: "Charge Time", value: "1.5 hrs" },
-      { label: "Water Resistance", value: "IPX4" },
+      { label: "Driver", value: "13mm Dynamic Driver" },
+      { label: "Battery", value: "30 Hours total with case" },
+      { label: "Charging", value: "USB-C Fast Charge" },
+      { label: "Waterproof", value: "IPX4 Splashproof" },
+    ],
+    reviewsData: [
+      {
+        name: "James W.",
+        rating: 5,
+        text: "The noise cancellation is incredible. Perfect for my daily commute!",
+      },
+      {
+        name: "Sarah K.",
+        rating: 4,
+        text: "Amazing sound quality, though the fit took a few days to get right.",
+      },
     ],
   },
   {
@@ -45,12 +51,19 @@ export const staticProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 3,
     description:
-      "All‑day health tracking watch with AMOLED display, GPS and 7‑day battery.",
+      "A masterpiece of engineering and style. The Chronos Smart Watch tracks your health metrics in real-time with a stunning sapphire crystal AMOLED display that stays visible even under direct sunlight.",
     specs: [
-      { label: "Display", value: "1.4‑inch AMOLED" },
-      { label: "Battery", value: "Up to 7 days" },
-      { label: "GPS", value: "Built‑in" },
-      { label: "Water Resistance", value: "IP68" },
+      { label: "Display", value: '1.4" Sapphire AMOLED' },
+      { label: "Battery", value: "Up to 10 Days" },
+      { label: "Sensors", value: "Heart Rate, SpO2, ECG" },
+      { label: "Connectivity", value: "Bluetooth 5.3 & WiFi" },
+    ],
+    reviewsData: [
+      {
+        name: "Michael B.",
+        rating: 5,
+        text: "The battery life is a game changer. I only charge it once a week.",
+      },
     ],
   },
   {
@@ -64,11 +77,19 @@ export const staticProducts: ProductWithDetails[] = [
     isSustainable: true,
     deliveryDays: 4,
     description:
-      "Classic canvas messenger bag with leather trim, laptop sleeve and adjustable shoulder strap.",
+      "Crafted from premium waxed canvas and top-grain leather, the Heritage Bag is designed to age beautifully. It features a dedicated padded compartment for laptops up to 15 inches.",
     specs: [
-      { label: "Material", value: "Waxed canvas + leather" },
-      { label: "Capacity", value: "18 L" },
-      { label: "Laptop Sleeve", value: "Fits 15″" },
+      { label: "Material", value: "Waxed Canvas & Leather" },
+      { label: "Capacity", value: "15L" },
+      { label: "Laptop Slot", value: "Fits 15.6 inch" },
+      { label: "Weight", value: "1.1 kg" },
+    ],
+    reviewsData: [
+      {
+        name: "David L.",
+        rating: 5,
+        text: "Incredibly durable. The leather trim is high quality.",
+      },
     ],
   },
   {
@@ -82,11 +103,19 @@ export const staticProducts: ProductWithDetails[] = [
     category: "Eyewear",
     deliveryDays: 2,
     description:
-      "Polarized gradient‑tint sunglasses with UV400 protection and a lightweight acetate frame.",
+      "Sleek, lightweight, and timeless. Our Noir Gradient series offers 100% UV protection with a specialized anti-reflective coating to reduce eye strain during long drives.",
     specs: [
-      { label: "Lens Type", value: "Polarized UV400" },
-      { label: "Frame Material", value: "Acetate" },
-      { label: "UV Protection", value: "UV400" },
+      { label: "Lens", value: "Polarized Gradient" },
+      { label: "Frame", value: "Hand-polished Acetate" },
+      { label: "UV Protection", value: "UV400 Certified" },
+      { label: "Weight", value: "28 grams" },
+    ],
+    reviewsData: [
+      {
+        name: "Emma S.",
+        rating: 4,
+        text: "Very stylish, but slightly larger than I expected.",
+      },
     ],
   },
   {
@@ -100,11 +129,19 @@ export const staticProducts: ProductWithDetails[] = [
     isSustainable: true,
     deliveryDays: 5,
     description:
-      "Minimalist LED desk lamp with adjustable arm, touch‑dimmer and USB charging port.",
+      "Illuminate your workspace with a touch of minimalism. The Arc Lamp features adjustable color temperatures and a flicker-free LED panel to reduce eye fatigue during late-night study sessions.",
     specs: [
-      { label: "Light Source", value: "LED 5 W" },
-      { label: "Color Temperature", value: "3000K–6000K" },
-      { label: "USB Port", value: "5 V/1 A" },
+      { label: "LED Power", value: "8W Low Energy" },
+      { label: "Modes", value: "3 Color Temps" },
+      { label: "Brightness", value: "Dimmable (10-100%)" },
+      { label: "Material", value: "Recycled Aluminum" },
+    ],
+    reviewsData: [
+      {
+        name: "Kevin T.",
+        rating: 5,
+        text: "Looks beautiful on my desk. The dimming feature is very smooth.",
+      },
     ],
   },
   {
@@ -119,12 +156,19 @@ export const staticProducts: ProductWithDetails[] = [
     isSustainable: true,
     deliveryDays: 3,
     description:
-      "Eco‑friendly running shoe made from recycled polyester and natural rubber outsole.",
+      "Step into the future of comfort. Featuring a proprietary cloud-foam midsole and a breathable recycled mesh upper, these sneakers provide maximum energy return for every stride.",
     specs: [
-      { label: "Upper", value: "Recycled polyester mesh" },
-      { label: "Midsole", value: "EVA foam" },
-      { label: "Outsole", value: "Natural rubber" },
-      { label: "Weight", value: "260 g (men’s 9)" },
+      { label: "Cushioning", value: "Cloud-Foam Tech" },
+      { label: "Upper", value: "Recycled Ocean Plastic" },
+      { label: "Outsole", value: "Non-slip Rubber" },
+      { label: "Weight", value: "210g per shoe" },
+    ],
+    reviewsData: [
+      {
+        name: "Jason M.",
+        rating: 5,
+        text: "Feels like walking on air. Best running shoes I've had.",
+      },
     ],
   },
   {
@@ -138,11 +182,19 @@ export const staticProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 5,
     description:
-      "Timeless low‑top sneaker with canvas upper, rubber toe cap and vulcanized sole.",
+      "The definitive everyday sneaker. Combining a vulcanized rubber sole with high-grade canvas, this shoe offers a timeless silhouette that pairs perfectly with any outfit.",
     specs: [
-      { label: "Upper", value: "Canvas" },
-      { label: "Toe Cap", value: "Rubber" },
-      { label: "Sole", value: "Vulcanized rubber" },
+      { label: "Material", value: "Premium Canvas" },
+      { label: "Sole", value: "Vulcanized Rubber" },
+      { label: "Style", value: "Low-Top" },
+      { label: "Fit", value: "Standard" },
+    ],
+    reviewsData: [
+      {
+        name: "Chris P.",
+        rating: 5,
+        text: "Simple, clean, and comfortable. Exactly what I wanted.",
+      },
     ],
   },
 ];

@@ -1,11 +1,6 @@
 import { Product } from "@/components/ProductCard";
 
-interface ProductWithDetails extends Product {
-  description?: string;
-  specs?: { label: string; value: string }[];
-}
-
-export const menProducts: ProductWithDetails[] = [
+export const menProducts: Product[] = [
   {
     id: "men-1",
     name: "Classic Denim Jacket",
@@ -19,11 +14,19 @@ export const menProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 3,
     description:
-      "A timeless denim jacket with a modern cut, button‑front closure and two chest pockets.",
+      "A rugged yet refined staple for every wardrobe. This jacket is crafted from heavy-duty denim with a tailored fit that provides both warmth and style for the transitional seasons.",
     specs: [
-      { label: "Material", value: "100 % Cotton Denim" },
-      { label: "Fit", value: "Regular" },
-      { label: "Care", value: "Machine wash cold" },
+      { label: "Material", value: "14oz Organic Denim" },
+      { label: "Fit", value: "Slim-Straight" },
+      { label: "Closure", value: "Stainless Steel Buttons" },
+      { label: "Pockets", value: "2 Chest, 2 Side" },
+    ],
+    reviewsData: [
+      {
+        name: "Mark S.",
+        rating: 5,
+        text: "Perfect fit. The denim is thick and feels very high quality.",
+      },
     ],
   },
   {
@@ -38,16 +41,24 @@ export const menProducts: ProductWithDetails[] = [
     isSustainable: true,
     deliveryDays: 4,
     description:
-      "Hand‑crafted full‑grain leather oxfords with a cushioned insole and Goodyear welt construction.",
+      "Elevate your formal attire. These oxfords are hand-stitched from full-grain Italian leather, featuring a cushioned insole for all-day comfort and a polished finish.",
     specs: [
-      { label: "Upper", value: "Full‑grain leather" },
-      { label: "Sole", value: "Leather + Rubber" },
-      { label: "Fit", value: "True to size" },
+      { label: "Leather", value: "Full-Grain Calfskin" },
+      { label: "Sole", value: "Hand-stitched Leather" },
+      { label: "Lining", value: "Breathable Sheepskin" },
+      { label: "Style", value: "Oxford" },
+    ],
+    reviewsData: [
+      {
+        name: "Robert H.",
+        rating: 5,
+        text: "The craftsmanship is unbelievable. Truly a luxury shoe.",
+      },
     ],
   },
   {
     id: "men-3",
-    name: "Sports Performance T‑Shirt",
+    name: "Sports Performance T-Shirt",
     price: 45,
     image:
       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
@@ -56,11 +67,19 @@ export const menProducts: ProductWithDetails[] = [
     category: "Clothing",
     deliveryDays: 2,
     description:
-      "Moisture‑wicking, four‑way stretch tee designed for high‑intensity workouts.",
+      "Engineered for athletes. This high-performance tee uses moisture-wicking technology to keep you dry and cool during the most intense workouts.",
     specs: [
-      { label: "Fabric", value: "Polyester‑Elastane blend" },
-      { label: "Fit", value: "Athletic" },
-      { label: "UV Protection", value: "UPF 30+" },
+      { label: "Fabric", value: "Recycled Polyester Blend" },
+      { label: "Tech", value: "Quick-Dry / Anti-Odor" },
+      { label: "Fit", value: "Athletic Fit" },
+      { label: "Sleeve", value: "Short Sleeve" },
+    ],
+    reviewsData: [
+      {
+        name: "Toby G.",
+        rating: 4,
+        text: "Great for gym sessions. Doesn't hold onto sweat.",
+      },
     ],
   },
   {
@@ -75,12 +94,19 @@ export const menProducts: ProductWithDetails[] = [
     category: "Accessories",
     deliveryDays: 5,
     description:
-      "Swiss‑made automatic watch with sapphire crystal, leather strap and a 42 mm case.",
+      "A bold statement of precision and luxury. Featuring a Swiss-engineered movement and a scratch-resistant sapphire crystal, this watch is designed for the modern leader.",
     specs: [
-      { label: "Movement", value: "Automatic" },
-      { label: "Case Diameter", value: "42 mm" },
-      { label: "Crystal", value: "Sapphire" },
-      { label: "Water Resistance", value: "100 m" },
+      { label: "Movement", value: "Automatic Quartz" },
+      { label: "Glass", value: "Sapphire Crystal" },
+      { label: "Case", value: "316L Stainless Steel" },
+      { label: "Waterproof", value: "5 ATM (50m)" },
+    ],
+    reviewsData: [
+      {
+        name: "Arthur P.",
+        rating: 5,
+        text: "Exceeded my expectations. The weight and feel are perfect.",
+      },
     ],
   },
   {
@@ -94,11 +120,19 @@ export const menProducts: ProductWithDetails[] = [
     category: "Clothing",
     deliveryDays: 3,
     description:
-      "Classic chino with a tapered leg, hidden button‑fly and side‑slash pockets.",
+      "The perfect balance between formal and casual. These chinos offer a tapered fit and a slight stretch for maximum comfort throughout the workday.",
     specs: [
-      { label: "Fabric", value: "Cotton‑Elastane twill" },
-      { label: "Inseam", value: "32 in" },
-      { label: "Care", value: "Machine wash warm" },
+      { label: "Fabric", value: "Cotton-Elastane Twill" },
+      { label: "Fit", value: "Modern Tapered" },
+      { label: "Pockets", value: "4-Pocket Design" },
+      { label: "Care", value: "Machine Washable" },
+    ],
+    reviewsData: [
+      {
+        name: "Leo W.",
+        rating: 5,
+        text: "Great fit and the color is exactly as shown online.",
+      },
     ],
   },
   {
@@ -114,11 +148,19 @@ export const menProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 2,
     description:
-      "Lightweight neutral‑support running shoe with breathable mesh upper and responsive foam midsole.",
+      "Maximize your stride with our Cloud-Trek runners. Featuring a responsive foam midsole that absorbs impact and a breathable mesh upper to keep your feet cool.",
     specs: [
-      { label: "Drop", value: "8 mm" },
-      { label: "Weight", value: "260 g (men’s 9)" },
-      { label: "Terrain", value: "Road" },
+      { label: "Midsole", value: "Responsive EVA Foam" },
+      { label: "Upper", value: "Engineered Mesh" },
+      { label: "Traction", value: "Multi-surface Rubber" },
+      { label: "Weight", value: "240g" },
+    ],
+    reviewsData: [
+      {
+        name: "Sam H.",
+        rating: 4,
+        text: "Very lightweight. Good for long distance running.",
+      },
     ],
   },
 ];

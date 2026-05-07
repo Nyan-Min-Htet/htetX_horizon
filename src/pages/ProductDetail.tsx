@@ -7,45 +7,59 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 import { productById } from "@/data/allProducts";
+import { Product } from "@/components/ProductCard";
+
+interface DetailedProduct extends Product {
+  images?: string[];
+  description?: string;
+  specs?: { label: string; value: string }[];
+  reviewsData?: { name: string; rating: number; text: string }[];
+}
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  type ProductItem = {
-    name: string;
-    price: number | string;
-    originalPrice?: number | string;
-    deliveryDays?: number;
-    description?: string;
-    specs?: { label: string; value: string }[];
-    reviews?: { name: string; rating: number; text: string }[];
-    images?: string[];
-    image?: string;
-    isNew?: boolean;
-  };
+  // Cast the product to DetailedProduct to stop the "Property does not exist" errors
+  const product = productById.get(id) as DetailedProduct | undefined;
 
-  const product = productById.get(id) as unknown as ProductItem | undefined;
+  // Hooks must run before the "if (!product)" return
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<
+    "description" | "specifications" | "reviews"
+  >("description");
 
-  // Hooks must run unconditionally
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [activeTab, setActiveTab] = useState<"desc" | "specs" | "rev">("desc");
+  if (!product) {
+    return (
+      <>
+        <Header />
+        <section className="min-h-screen flex items-center justify-center bg-background">
+          <p className="text-center text-xl text-muted-foreground">
+            Product not found. Please check the URL or return to{" "}
+            <a href="/" className="text-blue-600 underline">
+              home
+            </a>
+            .
+          </p>
+        </section>
+        <Footer />
+      </>
+    );
+  }
 
-  const description = product?.description;
-  const specs = product?.specs;
-  const reviews = product?.reviews;
+  // Safe data extraction with fallbacks
+  const images =
+    product.images && Array.isArray(product.images)
+      ? product.images
+      : [product.image];
 
-  const rawImages = product?.images;
-  const images: string[] =
-    Array.isArray(rawImages) && rawImages.length > 0
-      ? [...rawImages]
-      : product && product.image
-        ? [product.image]
-        : [];
+  const description =
+    product.description ||
+    "Detailed product description coming soon. Please check back for more information.";
+  const specs = product.specs || [];
+  const reviews = product.reviewsData || [];
 
-  if (!product) return <p className="p-6 text-center">Product not found.</p>;
-
-  const diffColor = product.isNew
+  const badgeColor = product.isNew
     ? "bg-green-500 text-white"
     : "bg-gray-200 text-gray-800";
 
@@ -57,46 +71,43 @@ export default function ProductDetail() {
         animate={{ opacity: 1, y: 0 }}
         className="py-16 min-h-screen bg-background"
       >
-        {/* ---------- Layout ---------- */}
         <div className="container mx-auto px-4 lg:px-8">
-          {/* Back button – always visible */}
+          {/* Back button */}
           <Button
             variant="ghost"
             size="lg"
             onClick={() => navigate(-1)}
-            className="self-start mb-6 flex items-center gap-2"
+            className="mb-8 flex items-center gap-2"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="px-5 py-2">Back to Products</span>
+            <span className="text-sm font-medium">Back to Products</span>
           </Button>
 
-          <div className="grid gap-8 md:grid-cols-[280px_1fr]">
-            {/* ---------- LEFT SIDE – Image Carousel ---------- */}
+          {/* Main Layout Grid */}
+          <div className="grid gap-8 md:grid-cols-[350px_1fr]">
+            {/* LEFT SIDE: Image Carousel */}
             <div className="relative">
-              {/* Main image */}
-              <div className="aspect-w-1 aspect-h-1 rounded-3xl overflow-hidden bg-gray-100 shadow-lg">
+              <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-lg">
                 <motion.img
-                  src={images[activeIdx]}
-                  alt={`${product.name} view ${activeIdx + 1}`}
+                  src={images[activeImageIndex]}
+                  alt={product.name}
                   className="w-full h-full object-cover"
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
 
-              {/* Thumbnail strip (only if >1 image) */}
               {images.length > 1 && (
                 <div className="flex gap-2 mt-4 overflow-x-auto scrollbar-hide">
                   {images.map((src, i) => (
                     <button
                       key={i}
-                      onClick={() => setActiveIdx(i)}
-                      className={`flex-shrink-0 w-10 h-10 rounded-md border-2 ${
-                        activeIdx === i
+                      onClick={() => setActiveImageIndex(i)}
+                      className={`flex-shrink-0 w-12 h-12 rounded-md border-2 transition-all ${
+                        activeImageIndex === i
                           ? "border-blue-500 bg-blue-50"
-                          : "border-gray-300 hover:bg-gray-50"
+                          : "border-gray-300"
                       }`}
-                      aria-label={`Image ${i + 1}`}
                     >
                       <img
                         src={src}
@@ -107,63 +118,16 @@ export default function ProductDetail() {
                   ))}
                 </div>
               )}
-
-              {/* Optional navigation arrows */}
-              <div className="absolute inset-y-0 flex items-center justify-between px-2 pointer-events-none">
-                <button
-                  onClick={() =>
-                    setActiveIdx(
-                      (activeIdx - 1 + images.length) % images.length,
-                    )
-                  }
-                  className="p-2 rounded-full bg-white/80 hover:bg-white/90 transition-colors"
-                  aria-label="Previous"
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setActiveIdx((activeIdx + 1) % images.length)}
-                  className="p-2 rounded-full bg-white/80 hover:bg-white/90 transition-colors"
-                  aria-label="Next"
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
             </div>
 
-            {/* ---------- RIGHT SIDE – Info & Tabs ---------- */}
+            {/* RIGHT SIDE: Content */}
             <div className="space-y-6">
-              {/* Title & Price */}
               <div>
                 <h1 className="text-3xl font-bold text-foreground">
                   {product.name}
                 </h1>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-2xl font-semibold text-blue-600">
+                  <span className="text-2xl font-bold text-blue-600">
                     ${product.price}
                   </span>
                   {product.originalPrice && (
@@ -174,149 +138,99 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* New / Regular badge */}
               <div
-                className={`inline-block px-3 py-1 rounded-full ${diffColor}`}
+                className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${badgeColor}`}
               >
-                {product.isNew ? "New" : "Regular"}
+                {product.isNew ? "New Arrival" : "In Stock"}
               </div>
 
-              {/* Delivery info */}
-              <p className="text-sm text-gray-500 mt-1">
-                {product.deliveryDays === 2
-                  ? "Tomorrow"
-                  : `${product.deliveryDays} days`}
-              </p>
-
-              {/* ---------- Tabs ---------- */}
-              <div className="border-b border-gray-200 pb-2">
-                <div className="flex space-x-4">
-                  <button
-                    onClick={() => setActiveTab("desc")}
-                    className={`
-                    px-3 py-2 text-sm font-medium
-                    ${
-                      activeTab === "desc"
-                        ? "border-b-2 border-blue-500 text-blue-600"
-                        : "text-gray-500 hover:text-gray-700"
-                    }
-                  `}
-                  >
-                    Description
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("specs")}
-                    className={`
-                    px-3 py-2 text-sm font-medium
-                    ${
-                      activeTab === "specs"
-                        ? "border-b-2 border-blue-500 text-blue-600"
-                        : "text-gray-500 hover:text-gray-700"
-                    }
-                  `}
-                  >
-                    Specs
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("rev")}
-                    className={`
-                    px-3 py-2 text-sm font-medium
-                    ${
-                      activeTab === "rev"
-                        ? "border-b-2 border-blue-500 text-blue-600"
-                        : "text-gray-500 hover:text-gray-700"
-                    }
-                  `}
-                  >
-                    Reviews
-                  </button>
+              {/* TABS */}
+              <div className="border-b border-gray-200">
+                <div className="flex space-x-6">
+                  {(["description", "specifications", "reviews"] as const).map(
+                    (tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`pb-3 text-sm font-medium transition-all ${
+                          activeTab === tab
+                            ? "border-b-2 border-blue-500 text-blue-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      </button>
+                    ),
+                  )}
                 </div>
               </div>
 
-              {/* ---------- Tab Panels ---------- */}
+              {/* TAB CONTENT */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-[200px]"
               >
-                {/* Description */}
-                {activeTab === "desc" && (
-                  <p className="text-gray-700 leading-relaxed">
-                    {description ||
-                      "Description coming soon – stay tuned for more details."}
-                  </p>
+                {activeTab === "description" && (
+                  <p className="text-gray-700 leading-relaxed">{description}</p>
                 )}
-
-                {/* Specs */}
-                {activeTab === "specs" && (
+                {activeTab === "specifications" && (
                   <div className="space-y-2">
-                    {specs?.length ? (
-                      specs!.map((spec, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="font-medium">{spec.label}</span>
-                          <span className="text-gray-600">{spec.value}</span>
+                    {specs.length > 0 ? (
+                      specs.map((s, i) => (
+                        <div
+                          key={i}
+                          className="flex justify-between py-2 border-b border-gray-100 text-sm"
+                        >
+                          <span className="font-medium text-gray-600">
+                            {s.label}
+                          </span>
+                          <span className="text-foreground">{s.value}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-500 italic">
-                        No specifications available.
+                      <p className="text-gray-400 italic">
+                        No specs available.
                       </p>
                     )}
                   </div>
                 )}
-
-                {/* Reviews */}
-                {activeTab === "rev" && (
-                  <>
-                    {reviews?.length ? (
-                      <div className="space-y-3">
-                        {reviews!.map((rev, i) => (
-                          <div
-                            key={i}
-                            className="border border-gray-200 rounded-lg p-4"
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <span className="font-medium">{rev.name}</span>
-                              <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    className={`h-4 w-4 ${star <= rev.rating ? "text-yellow-400" : "text-gray-300"}`}
-                                  />
-                                ))}
-                              </div>
+                {activeTab === "reviews" && (
+                  <div className="space-y-4">
+                    {reviews.length > 0 ? (
+                      reviews.map((rev, i) => (
+                        <div
+                          key={i}
+                          className="p-4 border rounded-xl bg-gray-50"
+                        >
+                          <div className="flex justify-between mb-2">
+                            <span className="font-bold">{rev.name}</span>
+                            <div className="flex gap-1">
+                              {[...Array(5)].map((_, s) => (
+                                <Star
+                                  key={s}
+                                  className={`h-3 w-3 ${s < rev.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"}`}
+                                />
+                              ))}
                             </div>
-                            <p className="text-gray-600">{rev.text}</p>
                           </div>
-                        ))}
-                      </div>
+                          <p className="text-sm text-gray-600">{rev.text}</p>
+                        </div>
+                      ))
                     ) : (
-                      <p className="text-gray-500 italic">No reviews yet.</p>
+                      <p className="text-gray-400 italic">No reviews yet.</p>
                     )}
-                  </>
+                  </div>
                 )}
               </motion.div>
 
-              {/* ---------- Sticky CTA (desktop) ---------- */}
-              <div className="hidden md:block">
-                <Button
-                  size="lg"
-                  className="w-100 py-2 px-10 bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Add to Cart
-                </Button>
-              </div>
+              <Button
+                size="lg"
+                className="w-100 bg-blue-600 hover:bg-blue-700 text-white py-4"
+              >
+                Add to Cart
+              </Button>
             </div>
-          </div>
-
-          {/* ---------- Mobile‑only sticky CTA ---------- */}
-          <div className="relative md:hidden p-4 mt-6">
-            <Button
-              size="lg"
-              className="w-100 py-2 px-10 bg-blue-600 text-white hover:bg-blue-700"
-            >
-              Add to Cart
-            </Button>
           </div>
         </div>
       </motion.section>

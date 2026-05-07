@@ -4,6 +4,7 @@ import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+// src/components/ProductCard.tsx
 export interface Product {
   id: string;
   name: string;
@@ -16,6 +17,9 @@ export interface Product {
   isNew?: boolean;
   isSustainable?: boolean;
   deliveryDays: number;
+  description?: string;
+  specs?: { label: string; value: string }[];
+  reviewsData?: { name: string; rating: number; text: string }[];
 }
 
 interface ProductCardProps {

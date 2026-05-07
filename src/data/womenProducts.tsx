@@ -1,11 +1,6 @@
 import { Product } from "@/components/ProductCard";
 
-interface ProductWithDetails extends Product {
-  description?: string;
-  specs?: { label: string; value: string }[];
-}
-
-export const womenProducts: ProductWithDetails[] = [
+export const womenProducts: Product[] = [
   {
     id: "women-1",
     name: "Elegant Summer Dress",
@@ -19,11 +14,19 @@ export const womenProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 3,
     description:
-      "Flowy midi dress in lightweight viscose with a subtle floral print and adjustable tie‑waist.",
+      "Embrace the sunshine in this flowy midi dress. Crafted from lightweight viscose with a delicate floral print, it's the perfect piece for garden parties or seaside vacations.",
     specs: [
-      { label: "Fabric", value: "Viscose‑Elastane blend" },
-      { label: "Length", value: "Midi (≈45 in)" },
-      { label: "Care", value: "Hand wash cold" },
+      { label: "Fabric", value: "100% Viscose" },
+      { label: "Length", value: "Midi" },
+      { label: "Fit", value: "A-Line / Flowy" },
+      { label: "Closure", value: "Back Zipper" },
+    ],
+    reviewsData: [
+      {
+        name: "Chloe S.",
+        rating: 5,
+        text: "Absolutely stunning. The fabric is so breathable!",
+      },
     ],
   },
   {
@@ -38,11 +41,19 @@ export const womenProducts: ProductWithDetails[] = [
     isSustainable: true,
     deliveryDays: 4,
     description:
-      "Structured top‑handle bag in full‑grain leather with interior zip pocket and gold‑tone hardware.",
+      "A statement of luxury and precision. This structured handbag is made from ethically sourced full-grain leather and features gold-plated hardware for a sophisticated touch.",
     specs: [
-      { label: "Material", value: "Full‑grain leather" },
-      { label: "Dimensions", value: "30 × 20 × 12 cm" },
-      { label: "Weight", value: "0.85 kg" },
+      { label: "Material", value: "Sustainably Sourced Leather" },
+      { label: "Hardware", value: "18k Gold Plated" },
+      { label: "Dimensions", value: "30cm x 20cm" },
+      { label: "Strap", value: "Detachable Shoulder Strap" },
+    ],
+    reviewsData: [
+      {
+        name: "Isabella M.",
+        rating: 5,
+        text: "The quality is unmatched. I get compliments every time I wear it.",
+      },
     ],
   },
   {
@@ -56,16 +67,24 @@ export const womenProducts: ProductWithDetails[] = [
     category: "Tops",
     deliveryDays: 2,
     description:
-      "Luxurious 100 % silk blouse with a relaxed fit, hidden button placket and subtle sheen.",
+      "Pure luxury in every thread. This 100% mulberry silk blouse offers a subtle sheen and a relaxed fit, making it an effortless transition from the office to dinner.",
     specs: [
-      { label: "Fabric", value: "100 % Silk" },
-      { label: "Fit", value: "Relaxed" },
-      { label: "Care", value: "Dry clean only" },
+      { label: "Fabric", value: "100% Mulberry Silk" },
+      { label: "Weave", value: "Satin Weave" },
+      { label: "Fit", value: "Relaxed / Oversized" },
+      { label: "Care", value: "Dry Clean Only" },
+    ],
+    reviewsData: [
+      {
+        name: "Sophia L.",
+        rating: 5,
+        text: "So soft on the skin. Truly a premium product.",
+      },
     ],
   },
   {
     id: "women-4",
-    name: "High‑Waisted Jeans",
+    name: "High-Waisted Jeans",
     price: 79,
     originalPrice: 99,
     image:
@@ -75,11 +94,19 @@ export const womenProducts: ProductWithDetails[] = [
     category: "Bottoms",
     deliveryDays: 3,
     description:
-      "High‑waisted, straight‑leg denim with a five‑pocket design and subtle whiskering.",
+      "The perfect denim fit. These high-waisted jeans are designed to contour your body while providing maximum comfort thanks to a hint of elastane for stretch.",
     specs: [
-      { label: "Fabric", value: "99 % Cotton, 1 % Elastane" },
-      { label: "Inseam", value: "30 in" },
-      { label: "Care", value: "Machine wash cold" },
+      { label: "Fabric", value: "98% Cotton, 2% Elastane" },
+      { label: "Rise", value: "High-Waist" },
+      { label: "Wash", value: "Vintage Indigo" }, // FIXED: removed double comma here
+      { label: "Fit", value: "Straight Leg" },
+    ],
+    reviewsData: [
+      {
+        name: "Grace T.",
+        rating: 4,
+        text: "Perfect fit, though the waist runs a bit small.",
+      },
     ],
   },
   {
@@ -94,11 +121,19 @@ export const womenProducts: ProductWithDetails[] = [
     isNew: true,
     deliveryDays: 2,
     description:
-      "Bold statement necklace featuring oversized crystal beads and a adjustable chain.",
+      "A bold touch of elegance. This statement piece features intricately carved crystals set in a polished silver-tone alloy, designed to turn heads at any event.",
     specs: [
-      { label: "Main Material", value: "Crystal & Alloy" },
-      { label: "Length", value: "16‑24 in (adjustable)" },
-      { label: "Care", value: "Wipe with soft cloth" },
+      { label: "Material", value: "Swarovski-style Crystals" },
+      { label: "Metal", value: "Hypoallergenic Alloy" },
+      { label: "Length", value: "Adjustable 16-20 inches" },
+      { label: "Weight", value: "Lightweight" },
+    ],
+    reviewsData: [
+      {
+        name: "Lily W.",
+        rating: 5,
+        text: "Stunning sparkle! It looks much more expensive than it is.",
+      },
     ],
   },
   {
@@ -112,11 +147,19 @@ export const womenProducts: ProductWithDetails[] = [
     category: "Footwear",
     deliveryDays: 4,
     description:
-      "Block‑heel pump with cushioned insole, soft suede upper and a versatile almond toe.",
+      "Style meets comfort. Our block-heel pumps feature a memory foam insole and soft suede upper, allowing you to stay elegant all day without the pain.",
     specs: [
-      { label: "Heel Height", value: "2.5 in" },
-      { label: "Upper", value: "Suede" },
-      { label: "Fit", value: "True to size" },
+      { label: "Heel Height", value: "3 inches" },
+      { label: "Material", value: "Premium Suede" },
+      { label: "Insole", value: "Memory Foam" },
+      { label: "Toe", value: "Almond Toe" },
+    ],
+    reviewsData: [
+      {
+        name: "Ava R.",
+        rating: 4,
+        text: "Very comfortable heels, though the color is a bit darker than the photo.",
+      },
     ],
   },
 ];

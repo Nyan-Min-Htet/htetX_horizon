@@ -1,10 +1,5 @@
 import { Product } from "@/components/ProductCard";
 
-interface ProductWithDetails extends Product {
-  description?: string;
-  specs?: { label: string; value: string }[];
-}
-
 export interface Collection {
   id: string;
   name: string;
@@ -12,14 +7,15 @@ export interface Collection {
   image: string;
   count: number;
   theme: string;
-  products: ProductWithDetails[];
+  products: Product[];
 }
 
 export const collectionsData: Collection[] = [
   {
     id: "1",
     name: "New Arrivals",
-    description: "Latest additions to our collection",
+    description:
+      "Stay ahead of the curve with our freshest drops. Featuring the latest in tech, fashion, and sustainable living.",
     image:
       "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=400&fit=crop",
     count: 24,
@@ -39,13 +35,18 @@ export const collectionsData: Collection[] = [
         isSustainable: true,
         deliveryDays: 2,
         description:
-          "Experience crystal‑clear sound with active noise cancellation, 30‑hour battery life, and a comfortable ergonomic fit. Perfect for commutes, workouts, or relaxing at home.",
+          "Industry-leading noise cancellation paired with an expansive soundstage. Designed for audiophiles who refuse to compromise.",
         specs: [
-          { label: "Driver Size", value: "12 mm" },
-          { label: "Battery Life", value: "30 hrs (ANC off)" },
-          { label: "Charge Time", value: "1.5 hrs" },
-          { label: "Water Resistance", value: "IPX4" },
-          { label: "Bluetooth", value: "5.2" },
+          { label: "Driver", value: "40mm Titanium" },
+          { label: "Noise Control", value: "Hybrid ANC" },
+          { label: "Battery", value: "40 Hours" },
+        ],
+        reviewsData: [
+          {
+            name: "Leo V.",
+            rating: 5,
+            text: "The soundstage is massive. Best headphones I've owned.",
+          },
         ],
       },
       {
@@ -60,12 +61,18 @@ export const collectionsData: Collection[] = [
         isNew: true,
         deliveryDays: 3,
         description:
-          "Track your heart‑rate, steps, sleep and more with a sleek AMOLED display and 7‑day battery life.",
+          "Your personal health coach on your wrist. Track everything from sleep quality to blood oxygen with clinical precision.",
         specs: [
-          { label: "Display", value: "1.4‑inch AMOLED" },
-          { label: "Battery", value: "Up to 7 days" },
-          { label: "Water Resistance", value: "IP68" },
-          { label: "Sensors", value: "HR, SpO2, Accelerometer, Gyro" },
+          { label: "Display", value: "AMOLED" },
+          { label: "Waterproof", value: "5ATM" },
+          { label: "Sensors", value: "Heart/Sleep/Stress" },
+        ],
+        reviewsData: [
+          {
+            name: "Mia J.",
+            rating: 5,
+            text: "Sleek design and incredibly accurate health tracking.",
+          },
         ],
       },
     ],
@@ -73,7 +80,8 @@ export const collectionsData: Collection[] = [
   {
     id: "2",
     name: "Best Sellers",
-    description: "Customer favorites that everyone loves",
+    description:
+      "The gold standard of our store. These products have been voted top-tier by thousands of our global customers.",
     image:
       "https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop",
     count: 18,
@@ -92,12 +100,18 @@ export const collectionsData: Collection[] = [
         isSustainable: true,
         deliveryDays: 4,
         description:
-          "A timeless leather backpack with padded laptop compartment, water‑resistant coating and adjustable straps.",
+          "A perfect blend of utility and elegance. This backpack is designed for the modern professional who values durability and style.",
         specs: [
-          { label: "Material", value: "Full‑grain leather" },
-          { label: "Capacity", value: "20 L" },
-          { label: "Laptop Sleeve", value: "Fits up to 15″" },
-          { label: "Weight", value: "1.2 kg" },
+          { label: "Material", value: "Vegetable Tanned Leather" },
+          { label: "Laptop Slot", value: "15-inch" },
+          { label: "Weight", value: "1.1kg" },
+        ],
+        reviewsData: [
+          {
+            name: "Oscar W.",
+            rating: 5,
+            text: "Timeless design. The leather is high grade.",
+          },
         ],
       },
     ],
@@ -105,7 +119,8 @@ export const collectionsData: Collection[] = [
   {
     id: "3",
     name: "Sustainable Picks",
-    description: "Eco‑friendly choices for conscious living",
+    description:
+      "Kind to you, kind to the planet. Our eco-line uses only recycled materials and non-toxic dyes.",
     image:
       "https://images.unsplash.com/photo-1618173745201-8e3bf8978acc?w=800&h=400&fit=crop",
     count: 12,
@@ -113,7 +128,7 @@ export const collectionsData: Collection[] = [
     products: [
       {
         id: "eco-1",
-        name: "Organic Cotton T‑Shirt",
+        name: "Organic Cotton T-Shirt",
         price: 45,
         image:
           "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
@@ -123,11 +138,18 @@ export const collectionsData: Collection[] = [
         isSustainable: true,
         deliveryDays: 3,
         description:
-          "Made from 100 % organic cotton, this tee is soft, breathable and dyed with low‑impact, water‑based inks.",
+          "Ultra-soft, breathable, and biodegradable. Our organic cotton is grown without pesticides, ensuring a healthier skin-touch.",
         specs: [
-          { label: "Fabric", value: "100 % Organic Cotton" },
-          { label: "Fit", value: "Regular" },
-          { label: "Care", value: "Machine wash cold" },
+          { label: "Fabric", value: "100% Organic Cotton" },
+          { label: "Dye", value: "Plant-based" },
+          { label: "Weight", value: "180 GSM" },
+        ],
+        reviewsData: [
+          {
+            name: "Lily G.",
+            rating: 4,
+            text: "So soft! Love supporting eco-friendly brands.",
+          },
         ],
       },
     ],
@@ -135,7 +157,8 @@ export const collectionsData: Collection[] = [
   {
     id: "4",
     name: "Sale",
-    description: "Special offers and discounted items",
+    description:
+      "Premium quality at a fraction of the cost. Limited time offers on our most wanted pieces.",
     image:
       "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?w=800&h=400&fit=crop",
     count: 8,
@@ -153,12 +176,14 @@ export const collectionsData: Collection[] = [
         category: "Audio",
         deliveryDays: 2,
         description:
-          "Enjoy your music on the go with these truly wireless earbuds – 5 hours playtime, quick‑charge case.",
+          "High-performance audio at an unbeatable price. Experience deep bass and crisp highs without breaking the bank.",
         specs: [
-          { label: "Playtime", value: "5 hrs" },
-          { label: "Charge Time", value: "1.5 hrs (case)" },
           { label: "Bluetooth", value: "5.0" },
-          { label: "Water Resistance", value: "IPX4" },
+          { label: "Playtime", value: "6 Hours" },
+          { label: "Waterproof", value: "IPX4" },
+        ],
+        reviewsData: [
+          { name: "Zack F.", rating: 4, text: "Great value for the price." },
         ],
       },
     ],
