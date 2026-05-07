@@ -20,10 +20,8 @@ export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Cast the product to DetailedProduct to stop the "Property does not exist" errors
   const product = productById.get(id) as DetailedProduct | undefined;
 
-  // Hooks must run before the "if (!product)" return
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<
     "description" | "specifications" | "reviews"
@@ -47,7 +45,6 @@ export default function ProductDetail() {
     );
   }
 
-  // Safe data extraction with fallbacks
   const images =
     product.images && Array.isArray(product.images)
       ? product.images
@@ -80,7 +77,7 @@ export default function ProductDetail() {
             className="mb-8 flex items-center gap-2"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="text-sm font-medium">Back to Products</span>
+            <span className="text-sm font-medium py-3">Back to Products</span>
           </Button>
 
           {/* Main Layout Grid */}
@@ -226,7 +223,7 @@ export default function ProductDetail() {
 
               <Button
                 size="lg"
-                className="w-100 bg-blue-600 hover:bg-blue-700 text-white py-4"
+                className="w-100 bg-blue-600 hover:bg-blue-700 text-white py-3"
               >
                 Add to Cart
               </Button>
