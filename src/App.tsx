@@ -14,6 +14,8 @@ import Men from "./pages/Men";
 import Women from "./pages/Women";
 import FAQ from "./pages/FAQ";
 import ProductDetail from "./pages/ProductDetail";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ const App = () => (
           <Route path="/women" element={<Women />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
