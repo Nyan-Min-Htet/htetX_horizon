@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
+import { Link } from "react-router-dom";
 
 export function Header() {
   const navLinks = [
@@ -73,9 +74,11 @@ export function Header() {
               </Button>
 
               {/* User */}
-              <Button variant="ghost" size="icon" className="hidden sm:flex">
-                <User className="h-5 w-5" />
-              </Button>
+              <Link to="/login">
+                <Button variant="ghost" size="icon" className="hidden sm:flex">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
 
               {/* Cart */}
               <Button variant="ghost" size="icon" className="relative">
