@@ -90,8 +90,7 @@ export function Header() {
 
           {/* Mobile Search */}
           <AnimatePresence>
-            <SearchBox />
-            {/* {isSearchOpen && (
+            {isSearchOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -110,7 +109,7 @@ export function Header() {
                   </div>
                 </div>
               </motion.div>
-            )} */}
+            )}
           </AnimatePresence>
         </div>
 
