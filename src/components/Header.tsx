@@ -158,13 +158,15 @@ export function Header() {
                   </NavLink>
                 ))}
                 <div className="pt-2 border-t border-border/50 mt-2">
-                  <a
-                    href="#"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-                  >
-                    <User className="h-4 w-4" />
-                    Account
-                  </a>
+                  <Link to="/login">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hidden sm:flex"
+                    >
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </Link>
                 </div>
               </nav>
             </motion.div>
