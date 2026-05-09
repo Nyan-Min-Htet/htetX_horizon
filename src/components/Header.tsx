@@ -52,16 +52,6 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              {/* Mobile Search Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-
               {/* User */}
               <Link to="/login">
                 <Button variant="ghost" size="icon" className="hidden sm:flex">
@@ -82,19 +72,6 @@ export function Header() {
                 )}
               </Link>
 
-              {/* <Button variant="ghost" size="icon" className="relative">
-                <ShoppingBag className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center"
-                  >
-                    {cartCount}
-                  </motion.span>
-                )}
-              </Button> */}
-
               {/* Mobile Menu Toggle */}
               <Button
                 variant="ghost"
@@ -113,7 +90,8 @@ export function Header() {
 
           {/* Mobile Search */}
           <AnimatePresence>
-            {isSearchOpen && (
+            <SearchBox />
+            {/* {isSearchOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -132,7 +110,7 @@ export function Header() {
                   </div>
                 </div>
               </motion.div>
-            )}
+            )} */}
           </AnimatePresence>
         </div>
 
