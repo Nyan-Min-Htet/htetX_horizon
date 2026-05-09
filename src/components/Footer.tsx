@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const footerLinks = {
   shop: [
-    { name: "New Arrivals", href: "#" },
+    { name: "New Arrivals", href: "/NewArrivals" },
     { name: "Best Sellers", href: "#" },
     { name: "Sale", href: "#" },
     { name: "Collections", href: "/collections" },

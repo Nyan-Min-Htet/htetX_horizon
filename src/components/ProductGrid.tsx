@@ -151,7 +151,7 @@ export function ProductGrid({
         </div>
 
         {/* Load More Button */}
-        {sortedProducts.length > 0 && (
+        {/* {sortedProducts.length > 0 && (
           <div className="text-center mt-7">
             <Button
               variant="outline"
@@ -161,7 +161,7 @@ export function ProductGrid({
               Load More Products
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );

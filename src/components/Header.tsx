@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
+import { Search, Menu, X, User, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
@@ -69,7 +69,19 @@ export function Header() {
               </Link>
 
               {/* Cart */}
-              <Button variant="ghost" size="icon" className="relative">
+              <Link
+                to="/cart"
+                className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <ShoppingCart className="h-6 w-6 text-gray-700" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* <Button variant="ghost" size="icon" className="relative">
                 <ShoppingBag className="h-5 w-5" />
                 {cartCount > 0 && (
                   <motion.span
@@ -80,7 +92,7 @@ export function Header() {
                     {cartCount}
                   </motion.span>
                 )}
-              </Button>
+              </Button> */}
 
               {/* Mobile Menu Toggle */}
               <Button

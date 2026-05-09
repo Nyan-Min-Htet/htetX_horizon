@@ -16,6 +16,8 @@ import FAQ from "./pages/FAQ";
 import ProductDetail from "./pages/ProductDetail";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import CartPage from "./pages/CartPage";
+import { CartProvider } from "./components/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -25,22 +27,25 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
+        <CartProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
 
-          <Route path="/NewArrivals" element={<NewArrivals />} />
-          <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/collections" element={<Collections />} />
-          <Route path="/men" element={<Men />} />
-          <Route path="/women" element={<Women />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+            <Route path="/NewArrivals" element={<NewArrivals />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/men" element={<Men />} />
+            <Route path="/women" element={<Women />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/cart" element={<CartPage />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CartProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/components/CartContext";
 
-// src/components/ProductCard.tsx
 export interface Product {
   id: string;
   name: string;
@@ -28,8 +28,15 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    navigate("/cart");
+  };
 
   if (!product) return null;
 
@@ -98,8 +105,10 @@ export function ProductCard({ product, index }: ProductCardProps) {
           transition={{ duration: 0.2 }}
         >
           <Button
-            className="flex-1 bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
+            variant="outline"
+            className="flex-1 bg-white text-gray-900 hover:bg-gray-50"
             size="sm"
+            onClick={handleAddToCart}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
