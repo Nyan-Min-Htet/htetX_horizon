@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
 import { SearchBox } from "./SearchBox";
+import { useCart } from "@/components/CartContext";
 
 export function Header() {
   const navLinks = [
@@ -16,7 +17,7 @@ export function Header() {
   ];
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [cartCount] = useState(3);
+  const { cartCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -75,7 +76,7 @@ export function Header() {
               >
                 <ShoppingCart className="h-6 w-6 text-gray-700" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white">
+                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white shadow-sm">
                     {cartCount}
                   </span>
                 )}
