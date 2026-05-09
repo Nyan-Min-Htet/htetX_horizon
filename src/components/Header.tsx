@@ -52,6 +52,16 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              {/* Mobile Search Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+
               {/* User */}
               <Link to="/login">
                 <Button variant="ghost" size="icon" className="hidden sm:flex">
@@ -135,15 +145,13 @@ export function Header() {
                   </NavLink>
                 ))}
                 <div className="pt-2 border-t border-border/50 mt-2">
-                  <Link to="/login">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hidden sm:flex"
-                    >
-                      <User className="h-5 w-5" />
-                    </Button>
-                  </Link>
+                  <a
+                    href="/login"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                  >
+                    <User className="h-4 w-4" />
+                    Account
+                  </a>
                 </div>
               </nav>
             </motion.div>
