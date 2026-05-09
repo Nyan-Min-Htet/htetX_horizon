@@ -72,11 +72,11 @@ export function Header() {
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="relative p-3 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <ShoppingCart className="h-6 w-6 text-gray-700" />
+                <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white shadow-sm">
+                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white shadow-sm">
                     {cartCount}
                   </span>
                 )}
