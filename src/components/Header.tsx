@@ -4,6 +4,7 @@ import { Search, ShoppingBag, Menu, X, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import { Link } from "react-router-dom";
+import { SearchBox } from "./SearchBox";
 
 export function Header() {
   const navLinks = [
@@ -46,20 +47,7 @@ export function Header() {
             </nav>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden md:flex flex-1 max-w-md mx-4">
-              <div className="relative w-full group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full h-11 pl-11 pr-4 rounded-2xl bg-secondary/50 border border-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/20 focus:bg-background transition-all"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2 py-1 rounded-lg bg-primary/10 text-primary text-xs font-medium">
-                  <Sparkles className="h-3 w-3" />
-                  AI
-                </div>
-              </div>
-            </div>
+            <SearchBox />
 
             {/* Actions */}
             <div className="flex items-center gap-2">
