@@ -1,75 +1,98 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
 
-import { productById } from "@/data/allProducts";
-import { Product } from "@/components/ProductCard";
-
-interface DetailedProduct extends Product {
-  images?: string[];
-  description?: string;
-  specs?: { label: string; value: string }[];
-  reviewsData?: { name: string; rating: number; text: string }[];
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  original_price?: number | null;
+  image: string;
+  rating?: number | null;
+  reviews?: number | null;
+  category?: string | null;
+  is_new?: boolean;
+  is_sustainable?: boolean;
+  delivery_days?: number | null;
+  description?: string | null;
+  specs?: Array<Record<string, unknown>>;
+  reviews_data?: Array<Record<string, unknown>>;
 }
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const product = productById.get(id) as DetailedProduct | undefined;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<
-    "description" | "specifications" | "reviews"
-  >("description");
+  useEffect(() => {
+    if (!id) return;
 
-  if (!product) {
+    async function fetchProduct() {
+      setLoading(true);
+
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("Supabase error:", error.message);
+          setProduct(null);
+          return;
+        }
+
+        setProduct(data as Product);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
     return (
-      <>
-        <Header />
-        <section className="min-h-screen flex items-center justify-center bg-background">
-          <p className="text-center text-xl text-muted-foreground">
-            Product not found. Please check the URL or return to{" "}
-            <a href="/" className="text-blue-600 underline">
-              home
-            </a>
-            .
-          </p>
-        </section>
-        <Footer />
-      </>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
-  const images =
-    product.images && Array.isArray(product.images)
-      ? product.images
-      : [product.image];
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl text-gray-500">Product not found</p>
+      </div>
+    );
+  }
 
-  const description =
-    product.description ||
-    "Detailed product description coming soon. Please check back for more information.";
-  const specs = product.specs || [];
-  const reviews = product.reviewsData || [];
-
-  const badgeColor = product.isNew
+  const badgeColor = product.is_new
     ? "bg-green-500 text-white"
     : "bg-gray-200 text-gray-800";
 
   return (
     <>
       <Header />
+
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="py-16 min-h-screen bg-background"
       >
         <div className="container mx-auto px-4 lg:px-8">
-          {/* Back button */}
+          {/* Back Button */}
           <Button
             variant="ghost"
             size="lg"
@@ -77,160 +100,80 @@ export default function ProductDetail() {
             className="mb-8 flex items-center gap-2"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="text-sm font-medium py-3">Back to Products</span>
+            Back
           </Button>
 
-          {/* Main Layout Grid */}
-          <div className="grid gap-8 md:grid-cols-[350px_1fr]">
-            {/* LEFT SIDE: Image Carousel */}
-            <div className="relative">
-              <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-lg">
-                <motion.img
-                  src={images[activeImageIndex]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-
-              {images.length > 1 && (
-                <div className="flex gap-2 mt-4 overflow-x-auto scrollbar-hide">
-                  {images.map((src, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveImageIndex(i)}
-                      className={`flex-shrink-0 w-12 h-12 rounded-md border-2 transition-all ${
-                        activeImageIndex === i
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      <img
-                        src={src}
-                        alt=""
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+          <div className="grid gap-10 md:grid-cols-[350px_1fr]">
+            {/* Image */}
+            <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-lg">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            {/* RIGHT SIDE: Content */}
+            {/* Info */}
             <div className="space-y-6">
+              {/* Name + Price */}
               <div>
-                <h1 className="text-3xl font-bold text-foreground">
-                  {product.name}
-                </h1>
+                <h1 className="text-3xl font-bold">{product.name}</h1>
+
                 <div className="flex items-center gap-3 mt-2">
                   <span className="text-2xl font-bold text-blue-600">
                     ${product.price}
                   </span>
-                  {product.originalPrice && (
+
+                  {product.original_price && (
                     <span className="text-sm text-gray-500 line-through">
-                      ${product.originalPrice}
+                      ${product.original_price}
                     </span>
                   )}
                 </div>
               </div>
 
+              {/* Badge */}
               <div
                 className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${badgeColor}`}
               >
-                {product.isNew ? "New Arrival" : "In Stock"}
+                {product.is_new ? "New Arrival" : "In Stock"}
               </div>
 
-              {/* TABS */}
-              <div className="border-b border-gray-200">
-                <div className="flex space-x-6">
-                  {(["description", "specifications", "reviews"] as const).map(
-                    (tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`pb-3 text-sm font-medium transition-all ${
-                          activeTab === tab
-                            ? "border-b-2 border-blue-500 text-blue-600"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                      </button>
-                    ),
-                  )}
-                </div>
+              {/* Delivery */}
+              <p className="text-sm text-gray-500">
+                {product.delivery_days
+                  ? product.delivery_days === 2
+                    ? "Ships Tomorrow"
+                    : `Ships in ${product.delivery_days} days`
+                  : "Shipping info unavailable"}
+              </p>
+
+              {/* Category */}
+              {product.category && (
+                <p className="text-sm text-gray-400 uppercase">
+                  {product.category}
+                </p>
+              )}
+
+              {/* Description */}
+              <div>
+                <h3 className="font-semibold mb-2">Description</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {product.description || "No description available."}
+                </p>
               </div>
 
-              {/* TAB CONTENT */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="min-h-[200px]"
-              >
-                {activeTab === "description" && (
-                  <p className="text-gray-700 leading-relaxed">{description}</p>
-                )}
-                {activeTab === "specifications" && (
-                  <div className="space-y-2">
-                    {specs.length > 0 ? (
-                      specs.map((s, i) => (
-                        <div
-                          key={i}
-                          className="flex justify-between py-2 border-b border-gray-100 text-sm"
-                        >
-                          <span className="font-medium text-gray-600">
-                            {s.label}
-                          </span>
-                          <span className="text-foreground">{s.value}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-400 italic">
-                        No specs available.
-                      </p>
-                    )}
-                  </div>
-                )}
-                {activeTab === "reviews" && (
-                  <div className="space-y-4">
-                    {reviews.length > 0 ? (
-                      reviews.map((rev, i) => (
-                        <div
-                          key={i}
-                          className="p-4 border rounded-xl bg-gray-50"
-                        >
-                          <div className="flex justify-between mb-2">
-                            <span className="font-bold">{rev.name}</span>
-                            <div className="flex gap-1">
-                              {[...Array(5)].map((_, s) => (
-                                <Star
-                                  key={s}
-                                  className={`h-3 w-3 ${s < rev.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"}`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600">{rev.text}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-400 italic">No reviews yet.</p>
-                    )}
-                  </div>
-                )}
-              </motion.div>
-
-              <Button
-                size="lg"
-                className="w-100 bg-blue-600 hover:bg-blue-700 text-white py-3"
-              >
-                Add to Cart
-              </Button>
+              {/* Price summary box */}
+              <div className="flex items-center gap-4 pt-4">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6">
+                  Add to Cart
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </motion.section>
+
       <Footer />
     </>
   );

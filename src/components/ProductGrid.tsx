@@ -1,34 +1,66 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ProductCard, Product } from "./ProductCard";
-import { FilterSidebar } from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
 import { Filter, Grid, List } from "lucide-react";
+import { supabase } from "@/lib/supabase"; //
 
 interface ProductGridProps {
   title: string;
-  products: Product[];
+  products?: Product[];
   showFilters?: boolean;
   theme?: "light" | "blue";
 }
 
 export function ProductGrid({
   title,
-  products,
+  products: providedProducts,
   showFilters = false,
   theme = "light",
 }: ProductGridProps) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [dbProducts, setDbProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
-  const [activeFilters, setActiveFilters] = useState(0);
 
   const bgColor = theme === "blue" ? "bg-blue-50" : "bg-white";
   const textColor = theme === "blue" ? "text-gray-900" : "text-gray-900";
   const mutedColor = theme === "blue" ? "text-gray-600" : "text-gray-600";
 
-  // Sort products function
+  // 1. Fetch data from Supabase if no products were passed as props
+  useEffect(() => {
+    if (!providedProducts) {
+      const fetchProducts = async () => {
+        setIsLoading(true);
+        try {
+          const { data, error } = await supabase.from("products").select("*");
+
+          if (error) throw error;
+
+          if (data) {
+            // FILTER OUT Men and Women products for the Home/General grid
+            const filtered = data.filter(
+              (p) => !p.id.startsWith("men-") && !p.id.startsWith("women-"),
+            );
+            setDbProducts(filtered);
+          }
+        } catch (err) {
+          console.error("Error fetching products:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchProducts();
+    }
+  }, [providedProducts]);
+
+  // Determine which data source to use (Props vs Database)
+  const finalProducts = providedProducts || dbProducts;
+
+  // 2. Sort products function (useMemo for performance)
   const sortedProducts = useMemo(() => {
-    const sorted = [...products];
+    if (!finalProducts) return [];
+    const sorted = [...finalProducts];
 
     switch (sortBy) {
       case "price-low":
@@ -40,28 +72,12 @@ export function ProductGrid({
       case "newest":
       default:
         return sorted.sort((a, b) => {
-          if (a.isNew && !b.isNew) return -1;
-          if (!a.isNew && b.isNew) return 1;
+          if (a.is_new && !b.is_new) return -1;
+          if (!a.is_new && b.is_new) return 1;
           return b.id.localeCompare(a.id);
         });
     }
-  }, [products, sortBy]);
-
-  // type FilterValues = {
-  //   [key: string]: unknown;
-  // };
-
-  // const handleFilterApply = (filters: FilterValues) => {
-  //   const count = Object.values(filters).reduce(
-  //     (total: number, current: unknown) => {
-  //       if (Array.isArray(current)) return total + current.length;
-  //       return total;
-  //     },
-  //     0,
-  //   );
-  //   setActiveFilters(Number(count));
-  //   setIsFilterOpen(false);
-  // };
+  }, [finalProducts, sortBy]);
 
   return (
     <section className={`py-16 ${bgColor}`}>
@@ -78,7 +94,6 @@ export function ProductGrid({
           </motion.h2>
 
           <div className="flex items-center gap-4">
-            {/* Sort Dropdown */}
             <div className="flex items-center gap-2">
               <span className={`text-sm ${mutedColor}`}>Sort by:</span>
               <select
@@ -92,47 +107,20 @@ export function ProductGrid({
                 <option value="rating">Highest Rated</option>
               </select>
             </div>
-
-            {/* Filter Button */}
-            {/* {showFilters && (
-              <Button
-                variant={activeFilters > 0 ? "default" : "outline"}
-                className="gap-2"
-                onClick={() => setIsFilterOpen(true)}
-              >
-                <Filter className="h-4 w-4" />
-                Filters
-                {activeFilters > 0 && (
-                  <span className="bg-white text-blue-600 px-2 py-1 rounded-full text-xs">
-                    {activeFilters}
-                  </span>
-                )}
-              </Button>
-            )} */}
           </div>
         </div>
 
         {/* Content Area */}
         <div className="flex gap-8">
-          {/* Filter Sidebar */}
-          {/* {showFilters && (
-            <FilterSidebar
-              isOpen={isFilterOpen}
-              onClose={() => setIsFilterOpen(false)}
-              onApply={handleFilterApply}
-              options={{
-                categories: ["Clothing", "Footwear", "Accessories", "Watches"],
-                sizes: ["S", "M", "L", "XL", "XXL"],
-                colors: ["Black", "Blue", "White", "Red", "Green"],
-                priceRange: { min: 0, max: 1000 },
-              }}
-              theme={theme}
-            />
-          )} */}
-
-          {/* Products Grid */}
           <div className="flex-1">
-            {sortedProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-muted-foreground animate-pulse">
+                  Loading products...
+                </p>
+              </div>
+            ) : sortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {sortedProducts.map((product, index) => (
                   <ProductCard
@@ -144,15 +132,18 @@ export function ProductGrid({
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className={mutedColor}>No products found</p>
+                <p className={mutedColor}>No products found in database.</p>
+                <p className="text-xs text-gray-400 mt-2">
+                  Please check if your Supabase table has data.
+                </p>
               </div>
             )}
           </div>
         </div>
 
         {/* Load More Button */}
-        {/* {sortedProducts.length > 0 && (
-          <div className="text-center mt-7">
+        {sortedProducts.length > 0 && (
+          <div className="text-center mt-12">
             <Button
               variant="outline"
               size="lg"
@@ -161,7 +152,7 @@ export function ProductGrid({
               Load More Products
             </Button>
           </div>
-        )} */}
+        )}
       </div>
     </section>
   );

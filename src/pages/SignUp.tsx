@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,12 +16,13 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      return alert("Passwords do not match!");
-    }
-    alert("Account created successfully!");
+  const handleSignUp = async () => {
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    });
+    if (error) alert(error.message);
+    else alert("Check your email for confirmation!");
   };
 
   return (
@@ -123,7 +125,8 @@ export default function SignUp() {
                 </div>
 
                 <Button
-                  type="submit"
+                  type="button"
+                  onClick={handleSignUp}
                   className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-200"
                 >
                   Sign Up

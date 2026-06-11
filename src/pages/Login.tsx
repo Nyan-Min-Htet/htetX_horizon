@@ -5,20 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password) {
-      alert(`Welcome back, ${email}! Login successful.`);
-    } else {
-      alert("Please enter both email and password");
-    }
+  const handleLogin = async (event?: React.FormEvent) => {
+    event?.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) alert(error.message);
+    else navigate("/"); // redirect to home
   };
 
   return (
@@ -117,7 +120,8 @@ export default function Login() {
 
                 {/* Sign In Button */}
                 <Button
-                  type="submit"
+                  type="button"
+                  onClick={handleLogin}
                   className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-blue-200"
                 >
                   Sign In

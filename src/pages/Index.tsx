@@ -5,7 +5,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { FeaturedBanner } from "@/components/FeaturedBanner";
 import { Features } from "@/components/Features";
 import { Footer } from "@/components/Footer";
-import { staticProducts } from "@/data/staticProducts";
+// import { staticProducts } from "@/data/staticProducts";
 
 const Index = () => {
   return (
@@ -14,7 +14,7 @@ const Index = () => {
       <main>
         <Hero />
         <Categories />
-        <ProductGrid title="Featured Products" products={staticProducts} />
+        <ProductGrid title="Featured Products" />
         <FeaturedBanner />
         <Features />
       </main>

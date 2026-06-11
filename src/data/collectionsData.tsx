@@ -25,15 +25,15 @@ export const collectionsData: Collection[] = [
         id: "new-1",
         name: "Premium Wireless Headphones",
         price: 299,
-        originalPrice: 399,
+        original_price: 399,
         image:
           "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
         rating: 4.8,
         reviews: 124,
         category: "Audio",
-        isNew: true,
-        isSustainable: true,
-        deliveryDays: 2,
+        is_new: true,
+        is_sustainable: true,
+        delivery_days: 2,
         description:
           "Industry-leading noise cancellation paired with an expansive soundstage. Designed for audiophiles who refuse to compromise.",
         specs: [
@@ -41,7 +41,7 @@ export const collectionsData: Collection[] = [
           { label: "Noise Control", value: "Hybrid ANC" },
           { label: "Battery", value: "40 Hours" },
         ],
-        reviewsData: [
+        reviews_data: [
           {
             name: "Leo V.",
             rating: 5,
@@ -58,8 +58,8 @@ export const collectionsData: Collection[] = [
         rating: 4.9,
         reviews: 89,
         category: "Wearables",
-        isNew: true,
-        deliveryDays: 3,
+        is_new: true,
+        delivery_days: 3,
         description:
           "Your personal health coach on your wrist. Track everything from sleep quality to blood oxygen with clinical precision.",
         specs: [
@@ -67,7 +67,7 @@ export const collectionsData: Collection[] = [
           { label: "Waterproof", value: "5ATM" },
           { label: "Sensors", value: "Heart/Sleep/Stress" },
         ],
-        reviewsData: [
+        reviews_data: [
           {
             name: "Mia J.",
             rating: 5,
@@ -91,14 +91,14 @@ export const collectionsData: Collection[] = [
         id: "best-1",
         name: "Classic Leather Backpack",
         price: 189,
-        originalPrice: 249,
+        original_price: 249,
         image:
           "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
         rating: 4.7,
         reviews: 256,
         category: "Accessories",
-        isSustainable: true,
-        deliveryDays: 4,
+        is_sustainable: true,
+        delivery_days: 4,
         description:
           "A perfect blend of utility and elegance. This backpack is designed for the modern professional who values durability and style.",
         specs: [
@@ -106,7 +106,7 @@ export const collectionsData: Collection[] = [
           { label: "Laptop Slot", value: "15-inch" },
           { label: "Weight", value: "1.1kg" },
         ],
-        reviewsData: [
+        reviews_data: [
           {
             name: "Oscar W.",
             rating: 5,
@@ -135,8 +135,8 @@ export const collectionsData: Collection[] = [
         rating: 4.6,
         reviews: 178,
         category: "Clothing",
-        isSustainable: true,
-        deliveryDays: 3,
+        is_sustainable: true,
+        delivery_days: 3,
         description:
           "Ultra-soft, breathable, and biodegradable. Our organic cotton is grown without pesticides, ensuring a healthier skin-touch.",
         specs: [
@@ -144,7 +144,7 @@ export const collectionsData: Collection[] = [
           { label: "Dye", value: "Plant-based" },
           { label: "Weight", value: "180 GSM" },
         ],
-        reviewsData: [
+        reviews_data: [
           {
             name: "Lily G.",
             rating: 4,
@@ -168,13 +168,13 @@ export const collectionsData: Collection[] = [
         id: "sale-1",
         name: "Wireless Earbuds",
         price: 79,
-        originalPrice: 129,
+        original_price: 129,
         image:
           "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop",
         rating: 4.4,
         reviews: 92,
         category: "Audio",
-        deliveryDays: 2,
+        delivery_days: 2,
         description:
           "High-performance audio at an unbeatable price. Experience deep bass and crisp highs without breaking the bank.",
         specs: [
@@ -182,7 +182,7 @@ export const collectionsData: Collection[] = [
           { label: "Playtime", value: "6 Hours" },
           { label: "Waterproof", value: "IPX4" },
         ],
-        reviewsData: [
+        reviews_data: [
           { name: "Zack F.", rating: 4, text: "Great value for the price." },
         ],
       },
