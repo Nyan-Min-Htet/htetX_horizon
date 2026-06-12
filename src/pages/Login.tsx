@@ -14,14 +14,21 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (event?: React.FormEvent) => {
-    event?.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
+      email: email.trim(),
       password: password,
     });
-    if (error) alert(error.message);
-    else navigate("/"); // redirect to home
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Login success!");
+    navigate("/");
   };
 
   return (
@@ -120,8 +127,7 @@ export default function Login() {
 
                 {/* Sign In Button */}
                 <Button
-                  type="button"
-                  onClick={handleLogin}
+                  type="submit"
                   className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-blue-200"
                 >
                   Sign In

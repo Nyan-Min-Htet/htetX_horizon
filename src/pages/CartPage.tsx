@@ -37,17 +37,16 @@ export default function CartPage() {
             </div>
           ) : (
             <div className="grid gap-8 lg:grid-cols-3">
-              {/* Left: Item List */}
               <div className="lg:col-span-2 space-y-4">
                 {cart.map((item) => (
                   <motion.div
                     key={item.id}
                     layout
-                    className="flex items-center gap-6 p-4 bg-white rounded-2xl border shadow-sm"
+                    className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-white rounded-2xl border shadow-sm"
                   >
                     <img
                       src={item.image}
-                      className="w-24 h-24 rounded-xl object-cover"
+                      className="w-full sm:w-24 h:48 sm:h-24 rounded-xl object-cover"
                       alt={item.name}
                     />
 
@@ -58,40 +57,42 @@ export default function CartPage() {
                       <p className="text-blue-600 font-bold">${item.price}</p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+                    <div className="flex items-center justify-between sm:justify-end gap-4">
+                      <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity - 1)
+                          }
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="text-sm font-bold w-6 text-center">
+                          {item.quantity}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full"
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity + 1)
+                          }
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-full"
-                        onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
-                        }
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => removeFromCart(item.id)}
                       >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="text-sm font-bold w-6 text-center">
-                        {item.quantity}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-full"
-                        onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
-                        }
-                      >
-                        <Plus className="h-3 w-3" />
+                        <Trash2 className="h-5 w-5" />
                       </Button>
                     </div>
-
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </Button>
                   </motion.div>
                 ))}
               </div>

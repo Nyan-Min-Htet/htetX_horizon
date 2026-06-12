@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, Camera } from "lucide-react";
+import { User, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -16,138 +18,130 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const handleSignUp = async () => {
-    const { data, error } = await supabase.auth.signUp({
-      email: formData.email,
+  const [loading, setLoading] = useState(false);
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { error } = await supabase.auth.signUp({
+      email: formData.email.trim(),
       password: formData.password,
+      options: {
+        data: {
+          full_name: formData.fullName,
+        },
+      },
     });
-    if (error) alert(error.message);
-    else alert("Check your email for confirmation!");
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Check your email to confirm signup!");
   };
 
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+
+      <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-            <div className="p-8">
-              <div className="text-center mb-10">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Create Account
-                </h1>
-                <p className="text-gray-500">
-                  Join us and start shopping today
-                </p>
+          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold">Create Account</h1>
+              <p className="text-gray-500">Join us and start shopping</p>
+            </div>
+
+            <form onSubmit={handleSignUp} className="space-y-5">
+              {/* Full Name */}
+              <div className="relative">
+                <User className="absolute left-3 top-3 text-gray-400" />
+                <Input
+                  placeholder="Full Name"
+                  className="pl-10 h-12"
+                  value={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
+                  required
+                />
               </div>
 
-              <form onSubmit={handleSignUp} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 ml-1">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="John Doe"
-                      className="pl-10 h-12 rounded-xl"
-                      value={formData.fullName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, fullName: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 ml-1">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="email"
-                      placeholder="name@example.com"
-                      className="pl-10 h-12 rounded-xl"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 ml-1">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      className="pl-10 h-12 rounded-xl"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 ml-1">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      className="pl-10 h-12 rounded-xl"
-                      value={formData.confirmPassword}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="button"
-                  onClick={handleSignUp}
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-200"
-                >
-                  Sign Up
-                </Button>
-              </form>
-
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-500">
-                  Already have an account?{" "}
-                  <Link
-                    to="/login"
-                    className="text-blue-600 font-semibold hover:underline"
-                  >
-                    Sign In
-                  </Link>
-                </p>
+              {/* Email */}
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 text-gray-400" />
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  className="pl-10 h-12"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
+                />
               </div>
+
+              {/* Password */}
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-gray-400" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  className="pl-10 h-12"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              {/* Confirm Password */}
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-gray-400" />
+                <Input
+                  type="password"
+                  placeholder="Confirm Password"
+                  className="pl-10 h-12"
+                  value={formData.confirmPassword}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+              >
+                {loading ? "Creating Account..." : "Sign Up"}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500">
+                Already have an account?{" "}
+                <Link to="/login" className="text-blue-600 font-semibold">
+                  Sign In
+                </Link>
+              </p>
             </div>
           </div>
         </motion.div>
       </div>
+
       <Footer />
     </>
   );

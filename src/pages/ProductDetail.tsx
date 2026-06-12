@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
+import { useCart } from "@/components/CartContext";
 
 interface Product {
   id: string;
@@ -20,13 +21,22 @@ interface Product {
   is_sustainable?: boolean;
   delivery_days?: number | null;
   description?: string | null;
-  specs?: Array<Record<string, unknown>>;
-  reviews_data?: Array<Record<string, unknown>>;
+  specs?: {
+    label: string;
+    value: string;
+  }[];
+
+  reviews_data?: {
+    name: string;
+    rating: number;
+    text: string;
+  }[];
 }
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,6 +92,11 @@ export default function ProductDetail() {
     ? "bg-green-500 text-white"
     : "bg-gray-200 text-gray-800";
 
+  const handleAddToCart = () => {
+    addToCart(product);
+    navigate("/cart");
+  };
+
   return (
     <>
       <Header />
@@ -97,9 +112,9 @@ export default function ProductDetail() {
             variant="ghost"
             size="lg"
             onClick={() => navigate(-1)}
-            className="mb-8 flex items-center gap-2"
+            className="mb-8 flex items-center gap-2 h-10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-10 w-10" />
             Back
           </Button>
 
@@ -163,9 +178,63 @@ export default function ProductDetail() {
                 </p>
               </div>
 
+              {/* Specifications */}
+              {product.specs && product.specs.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-3 text-lg">Specifications</h3>
+
+                  <div className="rounded-xl border border-gray-200 overflow-hidden">
+                    {product.specs.map((spec, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between px-4 py-3 border-b last:border-b-0"
+                      >
+                        <span className="font-medium text-gray-600">
+                          {spec.label}
+                        </span>
+
+                        <span className="text-gray-900">{spec.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews */}
+              {product.reviews_data && product.reviews_data.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-4 text-lg">
+                    Customer Reviews
+                  </h3>
+
+                  <div className="space-y-4">
+                    {product.reviews_data.map((review, index) => (
+                      <div key={index} className="border rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">{review.name}</h4>
+
+                          <div className="flex items-center gap-1">
+                            {[...Array(review.rating)].map((_, i) => (
+                              <span key={i} className="text-yellow-500">
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <p className="text-gray-600">{review.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Price summary box */}
               <div className="flex items-center gap-4 pt-4">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6">
+                <Button
+                  className="w-full align-center bg-blue-600 hover:bg-blue-700 text-white py-7 text-lg first-letter:uppercase"
+                  onClick={handleAddToCart}
+                >
                   Add to Cart
                 </Button>
               </div>

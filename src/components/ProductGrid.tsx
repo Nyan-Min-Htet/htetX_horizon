@@ -26,7 +26,50 @@ export function ProductGrid({
   const textColor = theme === "blue" ? "text-gray-900" : "text-gray-900";
   const mutedColor = theme === "blue" ? "text-gray-600" : "text-gray-600";
 
-  // 1. Fetch data from Supabase if no products were passed as props
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+
+  const PRODUCTS_PER_PAGE = 6;
+
+  const fetchProducts = async (pageNumber: number, replace = false) => {
+    try {
+      setLoading(true);
+
+      const from = (pageNumber - 1) * PRODUCTS_PER_PAGE;
+      const to = from + PRODUCTS_PER_PAGE - 1;
+
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .range(from, to);
+
+      if (error) throw error;
+
+      if (replace) {
+        setProducts(data || []);
+      } else {
+        setProducts((prev) => [...prev, ...(data || [])]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts(1, true);
+  }, []);
+
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+
+    await fetchProducts(nextPage);
+
+    setPage(nextPage);
+  };
+
   useEffect(() => {
     if (!providedProducts) {
       const fetchProducts = async () => {
@@ -37,7 +80,6 @@ export function ProductGrid({
           if (error) throw error;
 
           if (data) {
-            // FILTER OUT Men and Women products for the Home/General grid
             const filtered = data.filter(
               (p) => !p.id.startsWith("men-") && !p.id.startsWith("women-"),
             );
@@ -54,10 +96,8 @@ export function ProductGrid({
     }
   }, [providedProducts]);
 
-  // Determine which data source to use (Props vs Database)
   const finalProducts = providedProducts || dbProducts;
 
-  // 2. Sort products function (useMemo for performance)
   const sortedProducts = useMemo(() => {
     if (!finalProducts) return [];
     const sorted = [...finalProducts];
@@ -147,9 +187,11 @@ export function ProductGrid({
             <Button
               variant="outline"
               size="lg"
+              disabled={loading}
+              onClick={handleLoadMore}
               className="border-gray-300 text-gray-700 hover:bg-gray-50 py-4"
             >
-              Load More Products
+              {loading ? "Loading..." : "Load More Products"}
             </Button>
           </div>
         )}
