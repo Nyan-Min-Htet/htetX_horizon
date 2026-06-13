@@ -94,20 +94,19 @@ export default function Dashboard() {
       .from("profiles")
       .update({
         full_name: name,
-        email: email,
+        email: email.trim(),
       })
       .eq("id", user.id);
 
     setLoading(false);
 
     if (error) {
-      setToast(error.message);
+      alert(error.message);
       return;
     }
 
     setToast("Profile updated successfully!");
   };
-
   return (
     <>
       <Header />
