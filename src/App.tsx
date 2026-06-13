@@ -18,6 +18,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import CartPage from "./pages/CartPage";
 import { CartProvider } from "./components/CartContext";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cart" element={<CartPage />} />
 
             <Route path="*" element={<NotFound />} />

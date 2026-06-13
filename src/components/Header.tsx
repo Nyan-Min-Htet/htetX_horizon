@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu, X, User, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SearchBox } from "./SearchBox";
 import { useCart } from "@/components/CartContext";
+import { supabase } from "@/lib/supabase";
 
 export function Header() {
+  const navigate = useNavigate();
+
   const navLinks = [
     { name: "NewArrivals", to: "/NewArrivals" },
     { name: "Collections", to: "/collections" },
@@ -15,9 +18,33 @@ export function Header() {
     { name: "Women", to: "/women" },
     { name: "Sale", to: "/sale", highlight: true },
   ];
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
+
+  // 🔐 USER STATE
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [user, setUser] = useState<any>(null);
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user || null);
+    };
+
+    getUser();
+
+    // listen auth changes (important)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -27,14 +54,12 @@ export function Header() {
             {/* Logo */}
             <motion.a
               href="/"
-              className="flex items-center gap-2 font-bold text-xl md:text-2xl text-foreground"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 font-bold text-xl md:text-2xl"
             >
               <span className="text-gradient-primary">HtetX</span>
             </motion.a>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Nav */}
             <nav className="hidden lg:flex gap-6">
               {navLinks.map((link) => (
                 <NavLink
@@ -47,116 +72,86 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Search Bar - Desktop */}
+            {/* Search */}
             <SearchBox />
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              {/* Mobile Search Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-
-              {/* User */}
-              <Link to="/login">
-                <Button variant="ghost" size="icon" className="hidden sm:flex">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
-
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative p-3 hover:bg-gray-200 rounded-full transition-colors"
+                className="relative p-3 hover:bg-gray-200 rounded-full"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center border-2 border-white shadow-sm">
+                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-1.5 rounded-full">
                     {cartCount}
                   </span>
                 )}
               </Link>
 
-              {/* Mobile Menu Toggle */}
+              {/* 👤 AUTH BUTTON (IMPORTANT CHANGE) */}
+              {user ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate("/dashboard")}
+                  title="Dashboard"
+                >
+                  <User className="h-5 w-5 text-green-600" />
+                </Button>
+              ) : (
+                <Link to="/login">
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+              )}
+
+              {/* Mobile Menu */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="lg:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
+                {isMobileMenuOpen ? <X /> : <Menu />}
               </Button>
             </div>
           </div>
 
-          {/* Mobile Search */}
+          {/* Mobile Menu */}
           <AnimatePresence>
-            {isSearchOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="md:hidden overflow-hidden"
-              >
-                <div className="pb-4">
-                  <div className="relative w-full">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder="Search products..."
-                      autoFocus
-                      className="w-full h-12 pl-11 pr-4 rounded-2xl bg-secondary border border-transparent text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/20 focus:bg-background transition-all"
-                    />
+            {isMobileMenuOpen && (
+              <motion.div className="lg:hidden border-t">
+                <nav className="flex flex-col p-4 gap-2">
+                  {navLinks.map((link) => (
+                    <NavLink key={link.name} to={link.to}>
+                      {link.name}
+                    </NavLink>
+                  ))}
+
+                  <div className="border-t pt-2 mt-2">
+                    {user ? (
+                      <button
+                        onClick={() => navigate("/dashboard")}
+                        className="flex items-center gap-2"
+                      >
+                        <User className="h-4 w-4" />
+                        Dashboard
+                      </button>
+                    ) : (
+                      <Link to="/login" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Login
+                      </Link>
+                    )}
                   </div>
-                </div>
+                </nav>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden border-t border-border/50 overflow-hidden"
-            >
-              <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.name}
-                    to={link.to}
-                    className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                      link.highlight
-                    }`}
-                  >
-                    {link.name}
-                  </NavLink>
-                ))}
-                <div className="pt-2 border-t border-border/50 mt-2">
-                  <a
-                    href="/login"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-                  >
-                    <User className="h-4 w-4" />
-                    Account
-                  </a>
-                </div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </header>
   );

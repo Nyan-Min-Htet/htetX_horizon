@@ -4,6 +4,7 @@ import { Heart, ShoppingBag, Eye, Star, Leaf } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/CartContext";
+import { supabase } from "@/lib/supabase";
 
 export interface Product {
   id: string;
@@ -17,9 +18,6 @@ export interface Product {
   is_new?: boolean;
   is_sustainable?: boolean;
   delivery_days?: number | null;
-  description?: string | null;
-  specs?: Array<Record<string, unknown>>;
-  reviews_data?: Array<Record<string, unknown>>;
 }
 
 interface ProductCardProps {
@@ -31,14 +29,45 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
+  // 🧠 STATE
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [toast, setToast] = useState("");
 
+  // 🛒 ADD TO CART
   const handleAddToCart = () => {
     addToCart(product);
     navigate("/cart");
   };
 
+  // ❤️ FAVORITE FUNCTION
+  const addToFavorite = async (productId: string) => {
+    const { data } = await supabase.auth.getUser();
+    const user = data.user;
+
+    if (!user) {
+      setToast("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    const { error } = await supabase.from("favorites").insert([
+      {
+        user_id: user.id,
+        product_id: productId,
+      },
+    ]);
+
+    if (!error) {
+      setIsLiked(true);
+      setToast("Added to favorites ❤️");
+
+      // auto hide toast
+      setTimeout(() => setToast(""), 2000);
+    }
+  };
+
+  // 📉 DISCOUNT CALC
   const discount =
     product.original_price && product.original_price > product.price
       ? Math.round(
@@ -56,6 +85,14 @@ export function ProductCard({ product, index }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* 🧾 TOAST */}
+      {toast && (
+        <div className="fixed top-5 right-5 bg-black text-white px-4 py-2 rounded-lg z-50">
+          {toast}
+        </div>
+      )}
+
+      {/* IMAGE */}
       <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-100 mb-4">
         <motion.img
           src={product.image}
@@ -65,15 +102,16 @@ export function ProductCard({ product, index }: ProductCardProps) {
           transition={{ duration: 0.4 }}
         />
 
+        {/* BADGES */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
           {product.is_new && (
-            <span className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold">
+            <span className="px-3 py-1 rounded-full bg-blue-600 text-white text-xs">
               New
             </span>
           )}
 
           {discount && (
-            <span className="px-3 py-1 rounded-full bg-red-500 text-white text-xs font-semibold">
+            <span className="px-3 py-1 rounded-full bg-red-500 text-white text-xs">
               -{discount}%
             </span>
           )}
@@ -85,18 +123,20 @@ export function ProductCard({ product, index }: ProductCardProps) {
           )}
         </div>
 
+        {/* ❤️ HEART BUTTON */}
         <motion.button
           className="absolute top-4 right-4 p-2.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm"
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={() => addToFavorite(product.id)}
           whileTap={{ scale: 0.9 }}
         >
           <Heart
-            className={`h-4 w-4 ${
+            className={`h-4 w-4 transition ${
               isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
             }`}
           />
         </motion.button>
 
+        {/* ACTION BUTTONS */}
         <motion.div
           className="absolute bottom-4 left-4 right-4 flex gap-2"
           initial={{ opacity: 0, y: 10 }}
@@ -107,8 +147,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
         >
           <Button
             variant="outline"
-            className="flex-1 h-30 bg-white text-gray-900"
-            size="sm"
+            className="flex-1 h-10 bg-white text-gray-900"
             onClick={handleAddToCart}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
@@ -123,40 +162,35 @@ export function ProductCard({ product, index }: ProductCardProps) {
         </motion.div>
       </div>
 
+      {/* INFO */}
       <div className="space-y-2">
         <p className="text-xs text-gray-500 uppercase">
           {product.category || "Product"}
         </p>
 
-        <h3 className="font-semibold text-gray-900">{product.name}</h3>
+        <h3 className="font-semibold">{product.name}</h3>
 
         <div className="flex items-center gap-2">
           <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-
-          <span className="text-sm font-medium">{product.rating ?? 0}</span>
-
+          <span className="text-sm">{product.rating ?? 0}</span>
           <span className="text-sm text-gray-500">
-            ({product.reviews ?? 0} reviews)
+            ({product.reviews ?? 0})
           </span>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold">${product.price}</span>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2">
+            <span className="font-bold">${product.price}</span>
 
             {product.original_price && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="line-through text-gray-400 text-sm">
                 ${product.original_price}
               </span>
             )}
           </div>
 
           <span className="text-xs text-green-600">
-            {product.delivery_days
-              ? product.delivery_days === 2
-                ? "Tomorrow"
-                : `${product.delivery_days} days`
-              : "N/A"}
+            {product.delivery_days ? `${product.delivery_days} days` : "N/A"}
           </span>
         </div>
       </div>

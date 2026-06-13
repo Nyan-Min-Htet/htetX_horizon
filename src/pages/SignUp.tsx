@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 
 export default function SignUp() {
@@ -19,11 +19,22 @@ export default function SignUp() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { error } = await supabase.auth.signUp({
+    if (formData.password !== formData.confirmPassword) {
+      setToast({ message: "Passwords do not match", type: "error" });
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signUp({
       email: formData.email.trim(),
       password: formData.password,
       options: {
@@ -33,17 +44,37 @@ export default function SignUp() {
       },
     });
 
+    setLoading(false);
+
     if (error) {
-      alert(error.message);
+      setToast({ message: error.message, type: "error" });
       return;
     }
 
-    alert("Check your email to confirm signup!");
+    setToast({
+      message: "Account created successfully!",
+      type: "success",
+    });
+
+    // short delay then redirect
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 1200);
   };
 
   return (
     <>
       <Header />
+
+      {/* TOAST UI */}
+      {toast && (
+        <div
+          className={`fixed top-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg z-50
+          ${toast.type === "error" ? "bg-red-500" : "bg-green-500"}`}
+        >
+          {toast.message}
+        </div>
+      )}
 
       <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
         <motion.div
