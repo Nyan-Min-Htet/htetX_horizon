@@ -26,7 +26,6 @@ export default function SignUp() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       setToast({ message: "Passwords do not match", type: "error" });
       return;
@@ -39,7 +38,7 @@ export default function SignUp() {
       password: formData.password,
       options: {
         data: {
-          full_name: formData.fullName,
+          full_name: formData.fullName, // 👈 This goes to raw_user_meta_data
         },
       },
     });
@@ -52,25 +51,21 @@ export default function SignUp() {
     }
 
     setToast({
-      message: "Account created successfully!",
+      message: "Account created! Please check your email to confirm.",
       type: "success",
     });
 
-    // short delay then redirect
     setTimeout(() => {
-      navigate("/dashboard");
-    }, 1200);
+      navigate("/login");
+    }, 2000);
   };
 
   return (
     <>
       <Header />
-
-      {/* TOAST UI */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg z-50
-          ${toast.type === "error" ? "bg-red-500" : "bg-green-500"}`}
+          className={`fixed top-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg z-50 ${toast.type === "error" ? "bg-red-500" : "bg-green-500"}`}
         >
           {toast.message}
         </div>
@@ -89,7 +84,6 @@ export default function SignUp() {
             </div>
 
             <form onSubmit={handleSignUp} className="space-y-5">
-              {/* Full Name */}
               <div className="relative">
                 <User className="absolute left-3 top-3 text-gray-400" />
                 <Input
@@ -102,8 +96,6 @@ export default function SignUp() {
                   required
                 />
               </div>
-
-              {/* Email */}
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-gray-400" />
                 <Input
@@ -117,8 +109,6 @@ export default function SignUp() {
                   required
                 />
               </div>
-
-              {/* Password */}
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-gray-400" />
                 <Input
@@ -132,8 +122,6 @@ export default function SignUp() {
                   required
                 />
               </div>
-
-              {/* Confirm Password */}
               <div className="relative">
                 <Lock className="absolute left-3 top-3 text-gray-400" />
                 <Input
@@ -151,7 +139,6 @@ export default function SignUp() {
                 />
               </div>
 
-              {/* Submit */}
               <Button
                 type="submit"
                 disabled={loading}
@@ -172,7 +159,6 @@ export default function SignUp() {
           </div>
         </motion.div>
       </div>
-
       <Footer />
     </>
   );

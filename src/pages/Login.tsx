@@ -10,11 +10,9 @@ import { supabase } from "@/lib/supabase";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
@@ -43,12 +41,9 @@ export default function Login() {
   return (
     <>
       <Header />
-
-      {/* TOAST */}
       {toast && (
         <div
-          className={`fixed top-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg z-50
-          ${toast.type === "error" ? "bg-red-500" : "bg-green-500"}`}
+          className={`fixed top-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg z-50 ${toast.type === "error" ? "bg-red-500" : "bg-green-500"}`}
         >
           {toast.message}
         </div>
@@ -62,7 +57,6 @@ export default function Login() {
         >
           <div className="bg-white rounded-3xl shadow-2xl border border-gray-100">
             <div className="p-8">
-              {/* HEADER */}
               <div className="text-center mb-10">
                 <h1 className="text-3xl font-bold">Welcome Back</h1>
                 <p className="text-gray-500">
@@ -71,7 +65,6 @@ export default function Login() {
               </div>
 
               <form onSubmit={handleLogin} className="space-y-6">
-                {/* EMAIL */}
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
@@ -84,7 +77,6 @@ export default function Login() {
                   />
                 </div>
 
-                {/* PASSWORD */}
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
@@ -95,7 +87,6 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -105,7 +96,6 @@ export default function Login() {
                   </button>
                 </div>
 
-                {/* BUTTON */}
                 <Button
                   type="submit"
                   className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
@@ -114,7 +104,6 @@ export default function Login() {
                 </Button>
               </form>
 
-              {/* SIGNUP LINK */}
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-500">
                   Don't have an account?{" "}
@@ -127,7 +116,6 @@ export default function Login() {
           </div>
         </motion.div>
       </div>
-
       <Footer />
     </>
   );
