@@ -4,14 +4,80 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } =
     useCart();
 
+  const navigate = useNavigate();
+
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleCheckout = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    navigate("/checkout");
+  };
+
   return (
     <>
       <Header />
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white w-[90%] max-w-md rounded-3xl p-8 shadow-2xl"
+          >
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-blue-100 flex items-center justify-center">
+                <ShoppingCart className="h-10 w-10 text-blue-600" />
+              </div>
+
+              <h2 className="text-2xl font-bold mb-2">Login Required</h2>
+
+              <p className="text-gray-500 mb-8">
+                Please login or create an account to continue your checkout.
+              </p>
+
+              <div className="space-y-3">
+                <Button
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full h-12"
+                  onClick={() => navigate("/signup")}
+                >
+                  Create Account
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setShowAuthModal(false)}
+                >
+                  Continue Shopping
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -114,7 +180,10 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 py-6 rounded-xl text-lg">
+                <Button
+                  onClick={handleCheckout}
+                  className="w-full bg-blue-600 text-white hover:bg-blue-700 py-6 rounded-xl text-lg"
+                >
                   Checkout Now
                 </Button>
                 <Button

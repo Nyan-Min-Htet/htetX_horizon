@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
@@ -15,18 +16,37 @@ import {
   Package,
   Shield,
   ArrowRight,
+  Phone,
+  MapPin,
+  Edit,
+  Users,
+  ShoppingCart,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface UserDetails {
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  zip_code?: string;
+  bio?: string;
+  avatar_url?: string;
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [details, setDetails] = useState<UserDetails | null>(null);
   const [favorites, setFavorites] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
+  const [orders, setOrders] = useState<any[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
 
+  // 📥 LOAD ALL DATA ON MOUNT
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.auth.getUser();
@@ -36,6 +56,7 @@ export default function Dashboard() {
       }
       setUser(data.user);
 
+      // 👤 PROFILE
       const { data: profile } = await supabase
         .from("profiles")
         .select("*")
@@ -47,6 +68,27 @@ export default function Dashboard() {
         setEmail(profile.email || "");
       }
 
+      // 📋 USER DETAILS (Personal Info)
+      const { data: userDetails } = await supabase
+        .from("user_details")
+        .select("*")
+        .eq("user_id", data.user.id)
+        .single();
+
+      if (userDetails) {
+        setDetails(userDetails);
+      }
+
+      // 📦 ORDERS
+      const { data: orderData } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", data.user.id)
+        .order("created_at", { ascending: false });
+
+      setOrders(orderData || []);
+
+      // ❤️ FAVORITES
       const { data: favData } = await supabase
         .from("favorites")
         .select(`id, product_id, products (id, name, price, image, category)`)
@@ -57,11 +99,13 @@ export default function Dashboard() {
     load();
   }, [navigate]);
 
+  // 🚪 LOGOUT
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
   };
 
+  // ❌ REMOVE FAVORITE
   const removeFavorite = async (id: string) => {
     const { error } = await supabase.from("favorites").delete().eq("id", id);
     if (!error) {
@@ -71,12 +115,12 @@ export default function Dashboard() {
     }
   };
 
-  // Get the first letter of the name for the avatar
+  // 🖼️ AVATAR FALLBACK LETTER
   const avatarLetter = name
     ? name.charAt(0).toUpperCase()
-    : email.charAt(0).toUpperCase();
+    : email.charAt(0).toUpperCase() || "?";
 
-  // Format the join date
+  // 📅 JOIN DATE
   const joinDate = user
     ? new Date(user.created_at).toLocaleDateString("en-US", {
         year: "numeric",
@@ -85,11 +129,27 @@ export default function Dashboard() {
       })
     : "";
 
+  const formatOrderId = (id: string) => {
+    return `Order #${id.slice(0, 6).toUpperCase()}`;
+  };
+
+  const openOrder = async (order: any) => {
+    setSelectedOrder(order);
+
+    const { data } = await supabase
+      .from("order_items")
+      .select("*")
+      .eq("order_id", order.id);
+
+    setOrderItems(data || []);
+  };
+
   return (
     <>
       <Header />
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
-        {/* TOAST NOTIFICATION */}
+        {/* 🧾 TOAST NOTIFICATION */}
         {toast && (
           <div className="fixed top-24 right-5 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -97,7 +157,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* HERO BANNER SECTION */}
+        {/* 🎨 HERO BANNER */}
         <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-16 px-4 overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -107,8 +167,16 @@ export default function Dashboard() {
           <div className="relative max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8">
             {/* AVATAR */}
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-white/20 backdrop-blur-md border-4 border-white/30 flex items-center justify-center text-5xl font-bold shadow-2xl">
-                {avatarLetter}
+              <div className="w-32 h-32 rounded-full bg-white/20 backdrop-blur-md border-4 border-white/30 flex items-center justify-center text-5xl font-bold shadow-2xl overflow-hidden">
+                {details?.avatar_url ? (
+                  <img
+                    src={details.avatar_url}
+                    alt={name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  avatarLetter
+                )}
               </div>
               <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-400 border-4 border-white rounded-full"></div>
             </div>
@@ -139,7 +207,7 @@ export default function Dashboard() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 py-10 space-y-8 -mt-8">
-          {/* QUICK STATS GRID */}
+          {/* 📊 QUICK STATS GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
               <div className="flex items-center justify-between">
@@ -184,10 +252,11 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* MAIN CONTENT GRID */}
+          {/* 📋 MAIN CONTENT GRID */}
           <div className="grid lg:grid-cols-3 gap-6">
-            {/* LEFT: PROFILE INFORMATION (View Only) */}
+            {/* LEFT: PROFILE & PERSONAL INFO */}
             <div className="lg:col-span-1 space-y-6">
+              {/* ACCOUNT DETAILS CARD */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-100">
                   <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -208,7 +277,7 @@ export default function Dashboard() {
                     <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Email Address
                     </label>
-                    <p className="text-gray-800 font-medium mt-1 break-all">
+                    <p className="text-gray-800 font-medium mt-1 break-all text-sm">
                       {email}
                     </p>
                   </div>
@@ -221,14 +290,149 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-6 py-3 border-t border-gray-100">
-                  <p className="text-xs text-gray-500 text-center">
-                    To update your information, please use the Account Settings.
-                  </p>
+              </div>
+
+              {/* PERSONAL INFORMATION CARD */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-purple-600" />
+                    Personal Info
+                  </h2>
+                </div>
+
+                <div className="p-6 space-y-4">
+                  {!details ? (
+                    // 🆕 NO INFO YET - Show "Add" button
+                    <div className="text-center py-6">
+                      <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Users className="w-8 h-8 text-purple-300" />
+                      </div>
+                      <p className="text-sm text-gray-500 mb-4">
+                        No personal information added yet.
+                      </p>
+                      <Button
+                        onClick={() => navigate("/complete-profile")}
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Add Personal Info
+                      </Button>
+                    </div>
+                  ) : (
+                    // ✅ INFO EXISTS - Show view mode + Edit button
+                    <>
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <span className="text-sm text-gray-700">
+                          {details.phone || "Not set"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-gray-700">
+                          {[
+                            details.address,
+                            details.city,
+                            details.zip_code,
+                            details.country,
+                          ]
+                            .filter(Boolean)
+                            .join(", ") || "Not set"}
+                        </span>
+                      </div>
+
+                      {details.bio && (
+                        <div className="pt-3 border-t border-gray-100">
+                          <p className="text-xs text-gray-500 italic">
+                            "{details.bio}"
+                          </p>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() =>
+                          navigate("/complete-profile", {
+                            state: { fromEdit: true },
+                          })
+                        }
+                        className="mt-3 w-full bg-purple-50 hover:bg-purple-100 text-purple-600 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit Personal Info
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* QUICK ACTION CARD */}
+              {/* 📦 ORDERS SECTION */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <ShoppingCart className="w-5 h-5 text-green-600" />
+                    My Orders
+                  </h2>
+                  <span className="text-sm text-gray-500">
+                    {orders.length} {orders.length === 1 ? "order" : "orders"}
+                  </span>
+                </div>
+
+                <div className="p-6">
+                  {orders.length === 0 ? (
+                    <p className="text-gray-500 text-center py-10">
+                      No orders yet
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((order) => (
+                        <div
+                          key={order.id}
+                          onClick={() => openOrder(order)}
+                          className="border border-gray-200 rounded-xl p-4 cursor-pointer hover:shadow-md transition"
+                        >
+                          <div className="flex justify-between items-center">
+                            {/* LEFT */}
+                            <div>
+                              <p className="font-semibold text-gray-800">
+                                {formatOrderId(order.id)}
+                              </p>
+
+                              <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(order.created_at).toLocaleString()}
+                              </p>
+                            </div>
+
+                            {/* RIGHT */}
+                            <div className="text-right">
+                              <p className="font-bold text-gray-900">
+                                ${order.total_price}
+                              </p>
+
+                              <span
+                                className={`text-xs px-2 py-1 rounded-full ${
+                                  order.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : order.status === "completed"
+                                      ? "bg-green-100 text-green-700"
+                                      : "bg-blue-100 text-blue-700"
+                                }`}
+                              >
+                                {order.status}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 🚀 QUICK ACTION CARD */}
               <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white shadow-lg">
                 <ShoppingBag className="w-10 h-10 text-blue-400 mb-3" />
                 <h3 className="text-lg font-bold">Continue Shopping</h3>
@@ -236,7 +440,7 @@ export default function Dashboard() {
                   Explore our latest collection of premium products.
                 </p>
                 <button
-                  onClick={() => navigate("/NewArrivals")}
+                  onClick={() => navigate("/new-arrivals")}
                   className="mt-4 w-full bg-white text-gray-900 font-semibold py-2.5 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
                 >
                   Browse Products
@@ -245,7 +449,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* RIGHT: FAVORITES SECTION */}
+            {/* RIGHT: FAVORITES / WISHLIST */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="bg-gradient-to-r from-red-50 to-pink-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -254,12 +458,14 @@ export default function Dashboard() {
                     My Wishlist
                   </h2>
                   <span className="text-sm text-gray-500">
-                    {favorites.length} items
+                    {favorites.length}{" "}
+                    {favorites.length === 1 ? "item" : "items"}
                   </span>
                 </div>
 
                 <div className="p-6">
                   {favorites.length === 0 ? (
+                    // 💔 EMPTY STATE
                     <div className="text-center py-12">
                       <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Heart className="w-10 h-10 text-gray-300" />
@@ -270,36 +476,41 @@ export default function Dashboard() {
                       <p className="text-gray-500 text-sm mt-1 mb-4">
                         Start adding products you love!
                       </p>
-                      <button
+                      <Button
                         onClick={() => navigate("/new-arrivals")}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-colors"
+                        className="bg-blue-600 text-white hover:bg-blue-700"
                       >
+                        <ShoppingBag className="w-4 h-4 mr-2" />
                         Discover Products
-                      </button>
+                      </Button>
                     </div>
                   ) : (
+                    // ❤️ FAVORITES GRID
                     <div className="grid sm:grid-cols-2 gap-4">
                       {favorites.map((f) => (
                         <div
                           key={f.id}
                           className="group relative border border-gray-200 rounded-xl p-3 hover:shadow-md transition-all"
                         >
+                          {/* Product Image with Remove Button */}
                           <div className="relative overflow-hidden rounded-lg">
                             <img
                               src={f.products?.image}
-                              className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
                               alt={f.products?.name}
+                              className="w-full h-50 object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <button
                               onClick={() => removeFavorite(f.id)}
                               className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+                              title="Remove from wishlist"
                             >
                               <Trash2 size={14} />
                             </button>
                           </div>
 
+                          {/* Product Info */}
                           <div className="mt-3 space-y-1">
-                            <p className="text-xs text-blue-600 font-medium uppercase tracking-wider">
+                            <p className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">
                               {f.products?.category}
                             </p>
                             <h3 className="font-semibold text-gray-800 line-clamp-1">
@@ -336,6 +547,79 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-xl rounded-2xl p-6 shadow-2xl relative">
+            {/* Close */}
+            <button
+              onClick={() => setSelectedOrder(null)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5 text-blue-600" />
+              Order Details
+            </h2>
+
+            {/* ORDER INFO */}
+            <div className="text-sm space-y-2 border-b pb-4">
+              <p>
+                <span className="text-gray-500">Date:</span>{" "}
+                {new Date(selectedOrder.created_at).toLocaleString()}
+              </p>
+
+              <p>
+                <span className="text-gray-500">Status:</span>{" "}
+                <span className="font-semibold text-blue-600">
+                  {selectedOrder.status}
+                </span>
+              </p>
+
+              <p>
+                <span className="text-gray-500">Total:</span>{" "}
+                <span className="font-bold">${selectedOrder.total_price}</span>
+              </p>
+            </div>
+
+            {/* PRODUCTS */}
+            <div className="mt-4">
+              <h3 className="font-semibold mb-3">Products</h3>
+
+              {orderItems.length === 0 ? (
+                <p className="text-gray-500 text-sm">No items found</p>
+              ) : (
+                <div className="space-y-3">
+                  {orderItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-3 border p-2 rounded-lg"
+                    >
+                      <img
+                        src={item.product_image}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">
+                          {item.product_name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+
+                      <p className="font-bold text-sm">${item.price}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );

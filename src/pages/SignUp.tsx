@@ -56,7 +56,7 @@ export default function SignUp() {
     });
 
     setTimeout(() => {
-      navigate("/login");
+      navigate("/complete-profile");
     }, 2000);
   };
 
