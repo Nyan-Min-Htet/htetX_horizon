@@ -138,7 +138,19 @@ export default function Dashboard() {
 
     const { data } = await supabase
       .from("order_items")
-      .select("*")
+      .select(
+        `
+        id,
+        quantity,
+        price,
+        products (
+          id,
+          name,
+          price,
+          image
+        )
+      `,
+      )
       .eq("order_id", order.id);
 
     setOrderItems(data || []);
@@ -408,8 +420,8 @@ export default function Dashboard() {
 
                             {/* RIGHT */}
                             <div className="text-right">
-                              <p className="font-bold text-gray-900">
-                                ${order.total_price}
+                              <p className="font-bold">
+                                ${order.total_amount.toFixed(2)}
                               </p>
 
                               <span
@@ -549,72 +561,46 @@ export default function Dashboard() {
       </div>
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-xl rounded-2xl p-6 shadow-2xl relative">
-            {/* Close */}
+          <div className="bg-white w-full max-w-xl rounded-2xl p-6 relative">
             <button
               onClick={() => setSelectedOrder(null)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              className="absolute top-3 right-3"
             >
               ✕
             </button>
 
-            {/* Header */}
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-blue-600" />
-              Order Details
-            </h2>
+            <h2 className="text-xl font-bold mb-4">Order Details</h2>
 
-            {/* ORDER INFO */}
-            <div className="text-sm space-y-2 border-b pb-4">
-              <p>
-                <span className="text-gray-500">Date:</span>{" "}
-                {new Date(selectedOrder.created_at).toLocaleString()}
-              </p>
-
-              <p>
-                <span className="text-gray-500">Status:</span>{" "}
-                <span className="font-semibold text-blue-600">
-                  {selectedOrder.status}
-                </span>
-              </p>
-
-              <p>
-                <span className="text-gray-500">Total:</span>{" "}
-                <span className="font-bold">${selectedOrder.total_price}</span>
-              </p>
-            </div>
-
-            {/* PRODUCTS */}
-            <div className="mt-4">
-              <h3 className="font-semibold mb-3">Products</h3>
-
+            <div className="space-y-3">
               {orderItems.length === 0 ? (
-                <p className="text-gray-500 text-sm">No items found</p>
+                <p className="text-gray-500">No items found</p>
               ) : (
-                <div className="space-y-3">
-                  {orderItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 border p-2 rounded-lg"
-                    >
-                      <img
-                        src={item.product_image}
-                        className="w-12 h-12 object-cover rounded"
-                      />
+                orderItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 border p-2 rounded-lg"
+                  >
+                    {/* FIXED IMAGE */}
+                    <img
+                      src={item.products?.image}
+                      className="w-12 h-12 object-cover rounded"
+                    />
 
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {item.product_name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Qty: {item.quantity}
-                        </p>
-                      </div>
+                    <div className="flex-1">
+                      {/* FIXED NAME */}
+                      <p className="text-sm font-medium">
+                        {item.products?.name}
+                      </p>
 
-                      <p className="font-bold text-sm">${item.price}</p>
+                      <p className="text-xs text-gray-500">
+                        Qty: {item.quantity}
+                      </p>
                     </div>
-                  ))}
-                </div>
+
+                    {/* FIXED PRICE */}
+                    <p className="font-bold text-sm">${item.products?.price}</p>
+                  </div>
+                ))
               )}
             </div>
           </div>
