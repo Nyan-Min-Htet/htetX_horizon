@@ -500,7 +500,7 @@ export default function Dashboard() {
                         Start adding products you love!
                       </p>
                       <Button
-                        onClick={() => navigate("/new-arrivals")}
+                        onClick={() => navigate("/NewArrivals")}
                         className="bg-blue-600 text-white hover:bg-blue-700"
                       >
                         <ShoppingBag className="w-4 h-4 mr-2" />
