@@ -435,6 +435,17 @@ export default function Dashboard() {
                               >
                                 {order.status}
                               </span>
+
+                              {order.status === "pending" && (
+                                <button
+                                  onClick={() =>
+                                    navigate(`/payment/${order.id}`)
+                                  }
+                                  className="text-xs px-3 py-2 my-2 bg-green-600 text-white rounded-full"
+                                >
+                                  Make as Paid
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -452,7 +463,7 @@ export default function Dashboard() {
                   Explore our latest collection of premium products.
                 </p>
                 <button
-                  onClick={() => navigate("/new-arrivals")}
+                  onClick={() => navigate("/NewArrivals")}
                   className="mt-4 w-full bg-white text-gray-900 font-semibold py-2.5 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
                 >
                   Browse Products

@@ -1,16 +1,24 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useCart } from "@/components/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export default function CheckoutPage() {
-  const { cart, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
 
+  const [dbCart, setDbCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // 🔔 ADD TOAST STATE
+  const [toast, setToast] = useState("");
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  };
 
   const [form, setForm] = useState({
     fullName: "",
@@ -18,40 +26,73 @@ export default function CheckoutPage() {
     address: "",
   });
 
+  // 📥 FETCH CART
+  useEffect(() => {
+    const fetchCart = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) return;
+
+      const { data } = await supabase
+        .from("cart")
+        .select(
+          `
+          id,
+          quantity,
+          products (
+            id,
+            name,
+            price,
+            image
+          )
+        `,
+        )
+        .eq("user_id", userData.user.id);
+
+      setDbCart(data || []);
+    };
+
+    fetchCart();
+  }, []);
+
+  // 💰 TOTAL
+  const cartTotal = dbCart.reduce((sum, item) => {
+    return sum + item.products.price * item.quantity;
+  }, 0);
+
+  // 🧾 PLACE ORDER
   const handlePlaceOrder = async () => {
     setLoading(true);
 
     try {
       const {
         data: { user },
-        error: userError,
       } = await supabase.auth.getUser();
 
-      if (userError || !user) {
-        alert("Please login first");
+      if (!user) {
+        showToast("Please login first");
         navigate("/login");
         return;
       }
 
-      // ❗ basic validation
       if (!form.fullName || !form.phone || !form.address) {
-        alert("Please fill all fields");
+        showToast("Please fill all fields");
         setLoading(false);
         return;
       }
 
-      if (cart.length === 0) {
-        alert("Cart is empty");
+      if (dbCart.length === 0) {
+        showToast("Cart is empty");
         setLoading(false);
         return;
       }
 
-      // 1. create order
+      // 🧾 CREATE ORDER
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert([
           {
-            user_id: user.id, // ✅ MUST be UUID
+            user_id: user.id,
             total_amount: cartTotal,
             status: "pending",
             full_name: form.fullName,
@@ -63,18 +104,17 @@ export default function CheckoutPage() {
         .single();
 
       if (orderError || !order) {
-        console.log(orderError);
-        alert(orderError?.message || "Order creation failed");
+        showToast(orderError?.message || "Order creation failed");
         setLoading(false);
         return;
       }
 
-      // 2. insert order items
-      const items = cart.map((item) => ({
+      // 📦 ORDER ITEMS
+      const items = dbCart.map((item) => ({
         order_id: order.id,
-        product_id: String(item.id), // ❗ check this type
+        product_id: item.products.id,
         quantity: item.quantity,
-        price: item.price,
+        price: item.products.price,
       }));
 
       const { error: itemsError } = await supabase
@@ -82,22 +122,26 @@ export default function CheckoutPage() {
         .insert(items);
 
       if (itemsError) {
-        console.log(itemsError);
-        alert(itemsError.message);
+        showToast(itemsError.message);
         setLoading(false);
         return;
       }
 
-      // 3. success cleanup
-      clearCart();
+      // 🧹 CLEAR CART
+      await supabase.from("cart").delete().eq("user_id", user.id);
+
+      setDbCart([]);
       setLoading(false);
 
-      alert("Order placed successfully 🎉");
-      navigate("/dashboard");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+      // ✅ SUCCESS TOAST
+      showToast("Order placed successfully 🎉");
+
+      setTimeout(() => {
+        navigate(`/payment/${order.id}`);
+      }, 1200);
+    } catch (err) {
       console.log(err);
-      alert("Something went wrong");
+      showToast("Something went wrong");
       setLoading(false);
     }
   };
@@ -106,9 +150,16 @@ export default function CheckoutPage() {
     <>
       <Header />
 
+      {/* 🔔 TOAST UI */}
+      {toast && (
+        <div className="fixed top-5 right-5 bg-green-400 text-white px-4 py-3 rounded-xl shadow-lg z-50">
+          {toast}
+        </div>
+      )}
+
       <div className="min-h-screen bg-gray-50 py-10 px-4">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8">
-          {/* LEFT - FORM */}
+          {/* LEFT FORM */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -140,7 +191,7 @@ export default function CheckoutPage() {
             </div>
           </motion.div>
 
-          {/* RIGHT - ORDER SUMMARY */}
+          {/* RIGHT SUMMARY */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -149,12 +200,14 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
             <div className="space-y-3 mb-6">
-              {cart.map((item) => (
+              {dbCart.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
                   <span>
-                    {item.name} × {item.quantity}
+                    {item.products?.name} × {item.quantity}
                   </span>
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  <span>
+                    ${(item.products?.price * item.quantity).toFixed(2)}
+                  </span>
                 </div>
               ))}
             </div>

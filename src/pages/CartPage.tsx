@@ -1,20 +1,97 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
-import { useCart } from "@/components/CartContext";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } =
-    useCart();
-
   const navigate = useNavigate();
 
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const [cartItems, setCartItems] = useState<any[]>([]);
+
+  const cartTotal = cartItems.reduce((sum, item) => {
+    return sum + item.products.price * item.quantity;
+  }, 0);
+
+  const clearCart = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+
+    if (!userData.user) return;
+
+    const { error } = await supabase
+      .from("cart")
+      .delete()
+      .eq("user_id", userData.user.id);
+
+    if (!error) {
+      setCartItems([]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) return;
+
+      const { data } = await supabase
+        .from("cart")
+        .select(
+          `
+        id,
+        quantity,
+        products (
+          id,
+          name,
+          price,
+          image
+        )
+      `,
+        )
+        .eq("user_id", userData.user.id);
+
+      setCartItems(data || []);
+    };
+
+    fetchCart();
+  }, []);
+
+  const removeFromCart = async (id: string) => {
+    const { error } = await supabase.from("cart").delete().eq("id", id);
+
+    if (!error) {
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+    }
+  };
+
+  const updateQuantity = async (
+    id: string,
+    type: "inc" | "dec",
+    currentQty: number,
+  ) => {
+    const newQty = type === "inc" ? currentQty + 1 : currentQty - 1;
+
+    if (newQty < 1) return; // မနည်းစေချင်ရင်
+
+    const { error } = await supabase
+      .from("cart")
+      .update({ quantity: newQty })
+      .eq("id", id);
+
+    if (!error) {
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, quantity: newQty } : item,
+        ),
+      );
+    }
+  };
 
   const handleCheckout = async () => {
     const {
@@ -91,7 +168,7 @@ export default function CartPage() {
             </h1>
           </div>
 
-          {cart.length === 0 ? (
+          {cartItems.length === 0 ? (
             <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
               <p className="text-xl text-gray-500 mb-6">Your cart is empty!</p>
               <Button
@@ -104,23 +181,25 @@ export default function CartPage() {
           ) : (
             <div className="grid gap-8 lg:grid-cols-3">
               <div className="lg:col-span-2 space-y-4">
-                {cart.map((item) => (
+                {cartItems.map((item) => (
                   <motion.div
                     key={item.id}
                     layout
                     className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-white rounded-2xl border shadow-sm"
                   >
                     <img
-                      src={item.image}
+                      src={item.products?.image}
                       className="w-full sm:w-24 h:48 sm:h-24 rounded-xl object-cover"
                       alt={item.name}
                     />
 
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">
-                        {item.name}
+                        {item.products?.name}
                       </h3>
-                      <p className="text-blue-600 font-bold">${item.price}</p>
+                      <p className="text-blue-600 font-bold">
+                        ${item.products?.price}
+                      </p>
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-4">
@@ -130,7 +209,7 @@ export default function CartPage() {
                           size="icon"
                           className="h-8 w-8 rounded-full"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
+                            updateQuantity(item.id, "dec", item.quantity)
                           }
                         >
                           <Minus className="h-3 w-3" />
@@ -143,7 +222,7 @@ export default function CartPage() {
                           size="icon"
                           className="h-8 w-8 rounded-full"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(item.id, "inc", item.quantity)
                           }
                         >
                           <Plus className="h-3 w-3" />

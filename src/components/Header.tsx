@@ -21,8 +21,7 @@ export function Header() {
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { cartCount } = useCart();
-
+  const [cartCount, setCartCount] = useState(0);
   // 🔐 USER STATE
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
@@ -43,6 +42,29 @@ export function Header() {
 
     return () => {
       listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) return;
+
+      const { data } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("user_id", userData.user.id);
+
+      setCartCount(data?.length || 0);
+    };
+
+    fetchCartCount();
+
+    window.addEventListener("cart-updated", fetchCartCount);
+
+    return () => {
+      window.removeEventListener("cart-updated", fetchCartCount);
     };
   }, []);
 
@@ -84,7 +106,7 @@ export function Header() {
               >
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-1.5 rounded-full">
+                  <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
                     {cartCount}
                   </span>
                 )}

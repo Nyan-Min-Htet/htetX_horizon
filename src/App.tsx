@@ -21,6 +21,7 @@ import { CartProvider } from "./components/CartContext";
 import Dashboard from "./pages/Dashboard";
 import CompleteProfile from "./pages/CompleteProfile";
 import CheckoutPage from "./pages/CheckoutPage";
+import PaymentPage from "./pages/PaymentPage";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/:orderId" element={<PaymentPage />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

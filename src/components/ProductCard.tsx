@@ -26,7 +26,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
-  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   // 🧠 STATE
@@ -35,9 +34,47 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const [toast, setToast] = useState("");
 
   // 🛒 ADD TO CART
-  const handleAddToCart = () => {
-    addToCart(product);
-    navigate("/cart");
+  const handleAddToCart = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    console.log("User:", user.id);
+    console.log("Product:", product.id);
+
+    const { data: existingItem, error: checkError } = await supabase
+      .from("cart")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("product_id", product.id)
+      .maybeSingle();
+
+    console.log("existingItem", existingItem);
+    console.log("checkError", checkError);
+
+    if (existingItem) {
+      const { error } = await supabase
+        .from("cart")
+        .update({
+          quantity: existingItem.quantity + 1,
+        })
+        .eq("id", existingItem.id);
+
+      console.log(error);
+    } else {
+      const { error } = await supabase.from("cart").insert({
+        user_id: user.id,
+        product_id: product.id,
+        quantity: 1,
+      });
+
+      console.log(error);
+    }
   };
 
   // ❤️ FAVORITE FUNCTION

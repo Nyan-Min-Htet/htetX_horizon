@@ -25,7 +25,6 @@ interface Product {
     label: string;
     value: string;
   }[];
-
   reviews_data?: {
     name: string;
     rating: number;
@@ -36,17 +35,26 @@ interface Product {
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  // ❗ keep existing (NOT removed)
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // 🔔 ADD ONLY (toast)
+  const [toast, setToast] = useState("");
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  };
 
   useEffect(() => {
     if (!id) return;
 
     async function fetchProduct() {
       setLoading(true);
-
       try {
         const { data, error } = await supabase
           .from("products")
@@ -92,14 +100,56 @@ export default function ProductDetail() {
     ? "bg-green-500 text-white"
     : "bg-gray-200 text-gray-800";
 
-  const handleAddToCart = () => {
-    addToCart(product);
+  // ❗ REPLACED ONLY LOGIC (keep structure same idea)
+  const handleAddToCart = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+
+    if (!userData.user) {
+      showToast("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    // check existing cart item
+    const { data: existing } = await supabase
+      .from("cart")
+      .select("*")
+      .eq("user_id", userData.user.id)
+      .eq("product_id", product.id)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("cart")
+        .update({ quantity: existing.quantity + 1 })
+        .eq("id", existing.id);
+
+      showToast("Quantity updated 🛒");
+    } else {
+      await supabase.from("cart").insert([
+        {
+          user_id: userData.user.id,
+          product_id: product.id,
+          quantity: 1,
+        },
+      ]);
+
+      showToast("Added to cart 🛒");
+    }
+
     navigate("/cart");
   };
 
   return (
     <>
       <Header />
+
+      {/* 🔔 TOAST (ADDED ONLY) */}
+      {toast && (
+        <div className="fixed top-5 right-5 bg-black text-white px-4 py-3 rounded-xl shadow-lg z-50">
+          {toast}
+        </div>
+      )}
 
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -147,14 +197,14 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* Badge */}
+              {/* Badge (FIXED STRING) */}
               <div
                 className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${badgeColor}`}
               >
                 {product.is_new ? "New Arrival" : "In Stock"}
               </div>
 
-              {/* Delivery */}
+              {/* Delivery (FIXED TEMPLATE STRING) */}
               <p className="text-sm text-gray-500">
                 {product.delivery_days
                   ? product.delivery_days === 2
@@ -192,7 +242,6 @@ export default function ProductDetail() {
                         <span className="font-medium text-gray-600">
                           {spec.label}
                         </span>
-
                         <span className="text-gray-900">{spec.value}</span>
                       </div>
                     ))}
